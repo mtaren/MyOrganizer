@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.0"
+
+    defaultConfig {
+        applicationId "com.myorganizer.myorgranizer"
+        minSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //play store servies
+    compile 'com.google.android.gms:play-services:6.1.11'
+    //http async requests
+    compile 'com.loopj.android:android-async-http:1.4.5'
+    //for gson
+    compile 'com.google.code.gson:gson:2.2.4'
+
+    //for images async get from url
+    compile 'com.koushikdutta.ion:ion:2.+'
+}

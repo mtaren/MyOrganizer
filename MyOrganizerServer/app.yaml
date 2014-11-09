@@ -1,0 +1,16 @@
+application: organizer-python-758
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true    
+
+handlers:
+- url: /api/.*
+  secure: always
+  script: api.APP
+
+libraries:
+- name: webapp2
+  version: latest
+- name: pycrypto
+  version: latest
