@@ -28,7 +28,7 @@ import java.net.URL;
 
 
 public class HomeActivity extends Activity
-{
+{   //test
     private static final String CLIENT_ID = "772912633150-i2n10flv608mt1clc2dikfktf9spdpqu.apps.googleusercontent.com";
     private static final String USERPROFILE= "https://www.googleapis.com/auth/userinfo.profile";
     private final static String GPLUS_SCOPE
