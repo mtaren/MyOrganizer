@@ -5,12 +5,15 @@ api_version: 1
 threadsafe: true    
 
 handlers:
+- url: /u
+  static_dir: index
+- url: /img
+  static_dir: img
 - url: /.*
-  secure: always
+  secure: optional
   script: main.APP
+
 
 libraries:
 - name: webapp2
-  version: latest
-- name: pycrypto
   version: latest

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <form id="add-modify-object-form" class="white-popup mfp-hide form-horizontal">
+    <h1 class="text-center" id="modify-title"></h1>
+    <fieldset style="border:0;">
+     <div id="input fields" class="pull-left" width='480px'>
+        <!-- Name -->
+        <div class="row">
+          <label class="col-md-4" for="name-grid_modify-object">Name</label>
+          <div class="col-md-8">
+            <input class = "focusme" id="namePop-modify-object" name="name" type="text" placeholder="Name" required="">
+          </div>
+        </div>
+        <!-- QTY -->
+        <div class="row" id="qtyDisplay">
+          <label class="col-md-4" for="Qty">Qty</label>
+          <div class="col-md-8">
+            <input id="qtyPop-modify-object" name="qty" type="number" value="1" required="">
+          </div>
+        </div>
+        <!-- description -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Description</label>
+          <div class="col-md-8">
+            <input id="descPop-modify-object" name="desc" type="text" placeholder="shiny toothpaste" required="">
+          </div>
+        </div>
+        <!-- category -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Category</label>
+          <div class="col-md-8">
+            <div class="input">
+              <select name="select" id='catPop-modify-object'>
+                <option value="None">None</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Auto">Auto</option>
+                <option value="Books">Books</option>
+                <option value="Tools">Tools</option>
+                <option value="Toys">Toys</option>
+              </select>
+            </div >
+          </div>
+        </div>
+        <!-- picture upload button-->
+        <span class="btn btn-success fileinput-button"> Change Picture
+          <input id="fileuploadmodify-object" type="file" name="files[]"  multiple>
+        </span>
+        <!-- submit button -->
+        <br><br>
+        <div>
+            <Button id="addmodify-objectButt" class="btn btn-warning">  Submit   </Button>
+        </div> 
+        
+
+         
+     </div> 
+     <!-- preview of picture on the right -->
+     <div class='pull-right'>
+      <img id="modify-objectPreview" class="preview-image text-center">
+     </div>
+    </fieldset>
+  </form>
+
+
+  <script>
+    var CurrObj = {};
+    var MContainerList;
+    var MItemList;
+   function StartModify(CList, IList){
+    MContainerList = CList;
+    MItemList = IList;
+    ProcessItemForm();
+    $('#modifyButt').click();
+   }
+  
+   //call this for each item
+   function ProcessItemForm(){
+      if(MContainerList.length > 0){
+        CurrObj['obj'] = MContainerList.shift();
+        CurrObj['type'] = "container"
+        PopulateForm(CurrObj['obj'], "container");
+      }else{
+        if(MItemList.length > 0){
+          CurrObj['type'] = "item"
+          CurrObj['obj'] = MItemList.shift();
+          PopulateForm(CurrObj['obj'], "item");
+        }
+      }
+   }
+
+   function PopulateForm(obj, objType){
+      console.log("pop form");
+      $('#namePop-modify-object').val(obj.Name);
+      $('#descPop-modify-object').val(obj.Desc);
+      $('#catPop-modify-object').val(obj.Category);
+      // $('#catPop-modify-object').val("Apparel");
+      $('#modify-objectPreview').attr('src', obj.PicUrl);
+
+
+      if (objType == "container"){
+        $('#qtyDisplay').hide();
+      }else{
+        if(objType == "item"){
+          $('#qtyPop-modify-object').show();
+          $('#qtyPop-modify-object').val(obj.Qty)
+        }
+      }
+   }
+   
+   function getCategoryValFromText(cat){
+    switch(cat){
+      case "Apparel":
+        return 1;
+      case "Auto":
+        return 2;
+      case "Books":
+        return 3;
+      case "Tools":
+        return 4;
+      case "Toys":
+        return 5;
+      default:
+        return 0;
+    }
+   }
+   //for submit behavior
+       // prevent default submit behavior
+  $(function() {
+    $('#add-modify-object-form').submit(function(e) {
+        echo();
+        e.preventDefault();
+        //do the reqest
+        params = GetParamsFromAddPopup('modify-object');
+        params['ObjType'] = CurrObj['type'];
+        params['ObjId'] = CurrObj['obj'].Id;
+        //do ractual request here
+        ModifyObj_request(params);
+        console.log(params)
+        if( (MContainerList.length == 0) && (MItemList.length == 0)){
+          $.magnificPopup.close();
+        }else{
+          $('#namePop-modify-object').focus();
+          $("#fileuploadmodify-objectSubmit").remove();
+          ProcessItemForm()
+        }
+        
+    });
+  });
+
+   //------------- for file upload/image preview/
+   //image preview on image choose
+    $("#fileuploadmodify-object").change(function(){
+      console.log('something changed');
+      init_Preview_Image(this, '#modify-objectPreview');
+    });
+
+    //the file upload init
+    $('#fileuploadmodify-object').fileupload({
+        dataType: 'json',
+        add: function (e, data) {
+            data.context = $('<Button/>',{style:"display: none", id:"fileuploadmodify-objectSubmit"})
+                .appendTo(document.body)
+                .click(function () {
+                    console.log("submitting picture for upload");
+                    console.log(data);
+                    data.submit();
+                });
+        },
+      });
+ 
+  </script>
+</html>

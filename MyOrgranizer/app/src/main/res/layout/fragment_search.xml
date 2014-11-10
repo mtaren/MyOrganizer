@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" tools:context="com.myorganizer.myorgranizer.HomeFragment">
+
+    <com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView
+        android:id="@+id/gridView"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:verticalSpacing="2dp"
+        android:horizontalSpacing="4dp"
+        android:listSelector="@drawable/highlight_blue"
+        android:drawSelectorOnTop="true"
+        android:stretchMode="columnWidth"
+        android:numColumns="1"
+        android:columnCount="1"
+        />
+
+    <!--android:focusable="true"-->
+
+</RelativeLayout>

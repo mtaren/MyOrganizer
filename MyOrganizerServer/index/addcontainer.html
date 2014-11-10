@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <form id="add-container-form" class="white-popup mfp-hide form-horizontal">
+    <h1 class="text-center">Add An container</h1>
+    <fieldset style="border:0;">
+     <div id="input fields" class="pull-left" width='480px'>
+        <!-- Name -->
+        <div class="row">
+          <label class="col-md-4" for="name-grid_container">Name</label>
+          <div class="col-md-8">
+            <input class = "focusme" id="namePop-container" name="name" type="text" placeholder="Name" required="">
+          </div>
+        </div>
+     
+        <!-- description -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Description</label>
+          <div class="col-md-8">
+            <input id="descPop-container" name="desc" type="text" placeholder="add keywords" required="">
+          </div>
+        </div>
+        <!-- category -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Category</label>
+          <div class="col-md-8">
+            <div class="input">
+              <select name="select" id='catPop-container'>
+                <option value="None">None</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Auto">Auto</option>
+                <option value="Books">Books</option>
+                <option value="Tools">Tools</option>
+                <option value="Toys">Toys</option>
+              </select>
+            </div >
+          </div>
+        </div>
+        <!-- picture upload button-->
+        <span class="btn btn-success fileinput-button"> Change Picture
+          <input id="fileuploadcontainer" type="file" name="files[]"  multiple>
+        </span>
+        <!-- submit button -->
+        <br><br>
+        <div>
+            <Button id="addcontainerButt" class="btn btn-warning">  Add container   </Button>
+        </div> 
+        
+
+         
+     </div> 
+     <!-- preview of picture on the right -->
+     <div class='pull-right'>
+      <img id="containerPreview" src= "/img/container.jpg" class="preview-image text-center">
+     </div>
+    </fieldset>
+  </form>
+
+
+  <script>
+    //image preview on image choose
+    $("#fileuploadcontainer").change(function(){
+      console.log('something changed');
+      init_Preview_Image(this, '#containerPreview');
+    });
+
+    // prevent default submit behavior
+    $(function() {
+      $('#add-container-form').submit(function(e) {
+          e.preventDefault();
+          AddContainer_request();
+          $.magnificPopup.close();
+      });
+    });
+
+    //the file upload init
+    $('#fileuploadcontainer').fileupload({
+        dataType: 'json',
+        add: function (e, data) {
+            data.context = $('<Button/>',{style:"display: none", id:"fileuploadcontainerSubmit"})
+                .appendTo(document.body)
+                .click(function () {
+                    console.log("submitting picture for upload");
+                    console.log(data);
+                    data.submit();
+                });
+        },
+      });
+
+ 
+  </script>
+</html>

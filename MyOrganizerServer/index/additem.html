@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <form id="add-item-form" class="white-popup mfp-hide form-horizontal">
+    <h1 class="text-center">Add An Item</h1>
+    <fieldset style="border:0;">
+     <div id="input fields" class="pull-left" width='480px'>
+        <!-- Name -->
+        <div class="row">
+          <label class="col-md-4" for="name-grid_item">Name</label>
+          <div class="col-md-8">
+            <input class = "focusme" id="namePop-item" name="name" type="text" placeholder="Name" required="">
+          </div>
+        </div>
+        <!-- QTY -->
+        <div class="row">
+          <label class="col-md-4" for="Qty">Qty</label>
+          <div class="col-md-8">
+            <input id="qtyPop-item" name="qty" type="number" value="1" required="">
+          </div>
+        </div>
+        <!-- description -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Description</label>
+          <div class="col-md-8">
+            <input id="descPop-item" name="desc" type="text" placeholder="shiny toothpaste" required="">
+          </div>
+        </div>
+        <!-- category -->
+        <div class="row">
+          <label class="col-md-4" for="desc">Category</label>
+          <div class="col-md-8">
+            <div class="input">
+              <select name="select" id='catPop-item'>
+                <option value="None">None</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Auto">Auto</option>
+                <option value="Books">Books</option>
+                <option value="Tools">Tools</option>
+                <option value="Toys">Toys</option>
+              </select>
+            </div >
+          </div>
+        </div>
+        <!-- picture upload button-->
+        <span class="btn btn-success fileinput-button"> Change Picture
+          <input id="fileuploaditem" type="file" name="files[]"  multiple>
+        </span>
+        <!-- submit button -->
+        <br><br>
+        <div>
+            <Button id="addItemButt" class="btn btn-warning">  Add Item   </Button>
+        </div> 
+        
+
+         
+     </div> 
+     <!-- preview of picture on the right -->
+     <div class='pull-right'>
+      <img id="itemPreview" src= "/img/item.png" class="preview-image text-center">
+     </div>
+    </fieldset>
+  </form>
+
+
+  <script>
+    //image preview on image choose
+    $("#fileuploaditem").change(function(){
+      console.log('something changed');
+      init_Preview_Image(this, '#itemPreview');
+    });
+
+    // prevent default submit behavior
+    $(function() {
+      $('#add-item-form').submit(function(e) {
+          echo();
+          e.preventDefault();
+          AddItem_request();
+          $.magnificPopup.close();
+      });
+    });
+
+    //the file upload init
+    $('#fileuploaditem').fileupload({
+        dataType: 'json',
+        add: function (e, data) {
+            data.context = $('<Button/>',{style:"display: none", id:"fileuploaditemSubmit"})
+                .appendTo(document.body)
+                .click(function () {
+                    console.log("submitting picture for upload");
+                    console.log(data);
+                    data.submit();
+                });
+        },
+      });
+
+ 
+  </script>
+</html>

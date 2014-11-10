@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <!-- Mag popup css -->
+      <link rel="stylesheet" href="css/magpop.css"> 
+      <!-- Bootstrap -->
+      <link href="css/bootstrap.min.css" rel="stylesheet">
+      <link href="css/bootstrap-theme.css" rel="stylesheet">
+      <!-- file upload prettier -->
+      <link href="css/jquery.fileupload.css" rel="stylesheet">
+
+      <!-- my own -->
+      <link href="css/style.css" rel="stylesheet">
+      
+
+      
+      <title> My Organizer- Oragnize your things!</title>
+    </head>
+    <body >
+      <!-- Jquery  -->
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <!-- My Helper functions -->
+      <script src="js/home.js" type="text/javascript"></script>
+      <!-- Mag popup js  -->
+      <script src="js/magpop.js"></script> 
+      <!-- bootstrap js -->
+      <script src="js/bootstrap.min.js"></script>
+      <!-- File upload -->
+      <script src="js/jquery.ui.widget.js"></script>
+      <script src="js/jquery.iframe-transport.js"></script>
+      <script src="js/jquery.fileupload.js"></script>
+      
+<!-- <Button id='addContainer'>
+          AddContainer
+        </Button>
+        <Button id='testbutt2'>
+          test button 2
+        </Button>
+        <Button id='init'>
+          init
+        </Button> -->
+
+      <div class="content text-center width=1000px container">        
+
+        <!-- top of web page -->
+        <div class="title-bar">
+        <span class="web-title text-center">
+          MyOrganizer
+        </span>
+        
+        
+        <ul id="nav" class="pull-right">
+        <li id="notification_li">
+          <span id="notification_count"></span>
+          <a href="#" id="notificationLink"><span class="glyphicon glyphicon-bell"></span></a>
+          <div id="notificationContainer">
+          <div id="notificationTitle">Notifications</div>
+          <div id="notificationsBody" class="notifications"></div>
+          </div>
+          </li>
+       </li>
+      </ul>
+
+      </div>
+       
+   
+
+        <!-- this is the info section -->
+        
+        <div class="row container pad-bar">
+          
+          <!-- row of blue buttons and action items -->
+          <div id='viewTypeSelect' class=' col-md-6 text-left'>
+              <!-- VuewTypeButtons -->
+              <div class="btn-group " data-toggle="buttons">
+                <label class="btn btn-primary active" id="navRadio">
+                  <input type="radio" name="options" id="option1" autocomplete="off" checked> Navigate
+                </label>
+                <label class="btn btn-primary" id="selRadio">
+                  <input type="radio" name="options" id="option2" autocomplete="off" > Select
+                </label>
+                <label class="btn btn-primary">
+                  <input type="radio" name="options" id="option3" autocomplete="off"> View
+                </label>
+                <!-- dropdown menu  (hidden at first)-->
+              <span class ="pad-left-10"  id="SelectBar">
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle btn-info " data-toggle="dropdown" id="dropdownDisplay">Action...<span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" id = "dropDownMenu">
+                     <li><a tabindex="1" href="#">Delete</a></li>
+                     <li><a tabindex="2" href="#">Move</a></li>
+                     <li><a tabindex="3" href="#">Share</a></li>
+                     <li><a tabindex="4" href="#">Modify</a></li>
+                   </ul>
+                </div>
+
+
+                <!-- submit ubtton -->
+                <span>
+                  <button class="btn btn-warning" id="dropdownSubmit">
+                    Submit
+                  </button>
+                </span>
+              </span>
+
+              </div>
+          </div>
+
+          <!-- add things buttons -->
+
+          <div id='ActionItems' class=' col-md-6 text-right'>
+            
+            <button type="button" class="pull-right btn btn-default popup-with-form pad-left-5" href="#add-container-form">
+              <div id="addContainerForm"> </div>
+              <span class="glyphicon glyphicon-plus green"> </span> Container
+            </button>
+              
+            <button type="button" class="btn btn-default popup-add-item pull-right pad-left-5" href="#add-item-form">
+              <div id="addItemForm"> </div>
+              <span class="glyphicon glyphicon-plus green" aria-hidden="true"></span> Item
+            </button>
+
+            <!-- Search -->
+            <form method="get" action="/search" id="search-form" class="pull-right search">
+              <input  id="searchStr" name="q" type="text" size="40" placeholder="Search..." />
+            </form>
+
+          </div>
+
+        </div>
+        <!-- additional search options -->
+             <table id="search-options" class="pull-right">
+        <tr>
+            <td><input class='search-checkbox' id="search-options_0" type="checkbox" name="cl0" value="" checked /><label>Name </label></td>
+        </tr><tr>
+            <td><input class='search-checkbox'  id="search-options_1" type="checkbox" name="cl" value="" checked/><label>Description </label></td>
+        </tr><tr>
+            <td><label>Category  </label>
+              <select name="select" id='search-options_2'>
+                <option value="All">All</option>
+                <option value="None">None</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Auto">Auto</option>
+                <option value="Books">Books</option>
+                <option value="Tools">Tools</option>
+                <option value="Toys">Toys</option>
+              </select></td>
+        </tr>
+        </table>
+        
+         
+      
+
+        <!-- this is the path display -->
+        <div id='actionSection' class='pad-bar text-left'></div>
+        <!-- this is the grid of containers/items -->
+        <div id='conatainerPics' class="row row-centered container"></div>
+        <!-- hidden buttons for move form -->
+        <button type="button" class="popup-move-form" href="#move-object-form" style="display: none" id="moveButt">
+        <!-- hidden buttons for modify form -->  
+        <button type="button" class="popup-modify-form" href="#add-modify-object-form" style="display: none" id="modifyButt">
+        <!--  hidden button for share form-->
+        <button type="button" class="popup-share-form" href="#share-container-form" style="display: none" id="shareButt">
+        <!-- hidden button for error popups -->
+       
+      </div>
+    </body>
+  </html>
+
+<!-- Jquery here-->
+<script>
+
+$("#filebutton").click(function(){
+  UploadPicture();
+});
+
+
+$('#upload-button').click(function(){
+    console.log("clicked #upload button")
+});
+
+
+//attach jquery clicks/inits here
+$(document).ready(function() {
+  //init add container button
+  init_PopUp("#addContainerForm","/u/addcontainer.html",".popup-with-form");  
+  init_PopUp("#addItemForm","/u/additem.html",".popup-add-item");  
+  init_PopUp("#moveButt","/u/moveitem.html",".popup-move-form");  
+  init_PopUp("#modifyButt","/u/modifyobject.html",".popup-modify-form");  
+  init_PopUp("#shareButt","/u/sharecontainer.html",".popup-share-form");  
+  $('#notificationsBody').load('/u/pendingevents.html');
+
+  // dropdown init...
+  $("#SelectBar").hide();
+  $('#search-options').hide();
+  $('#notification_count').hide();
+  $(function(){
+    $(".dropdown-menu li a").click(function(){
+      $("#dropdownDisplay").text($(this).text());
+      $("#dropdownDisplay").val($(this).text());
+    });
+  });
+   $('#dropdownSubmit').click(clickedDropdownSubmit);
+  //init blue nav buttons
+  $('#navRadio').click(init_NavClicks);
+  $('#selRadio').click(init_SelClicks);
+
+  //todo remove this, or reuse as function
+  $('#addItemButt').click(function(){
+    console.log("clicked #addItme button");
+  });
+  
+  
+// search button
+$(function(){
+  $('#search-form').submit(SubmitSearch);
+  });
+// search options
+  $('#searchStr').on( 'focus',AppearSearch);
+  $('#searchStr').on( 'blur',DisappearSearch);
+  $('#searchStr').keypress(AppearSearchOptions);
+ 
+ // pending event
+ $("#notificationLink, #notification_count").click(function()
+{
+$("#notificationContainer").fadeToggle(200);
+$("#notification_count").fadeOut("fast");
+return false;
+});
+
+//Document Click hiding the popup 
+$(document).click(function()
+{
+  $("#notificationContainer").hide();
+});
+
+//Popup on click
+$("#notificationContainer").click(function()
+{
+  return false;
+});
+
+
+
+});
+
+function echo(){
+  console.log("hi");
+}
+
+
+
+//global variables
+var CurrentContainerId = "Null"; //(houses)
+var BackStack = []; //(houses)
+var viewType = "nav" // navigate/view/select
+
+//perform requests here
+GetHouses_request(); // and display
+
+//-- add container button
+//var containerId = 0;
+$('#addContainer').click(function(){
+  console.log("clicked me");
+  TestAddContainerToCurrentContainer();
+});
+$('#testbutt2').click(function(){
+  console.log(isPictureChosen("item"));
+  
+});
+ 
+$('#init').click(function(){
+  console.log("nothing assigned to this");
+});
+
+
+
+
+//---------------function declarations
+//$$$ Display things functions
+// 3 types of containers with names/id's
+function DisplayGridHouses(containers){
+  //TODO add shared and semiShared
+  data = JSON.parse(containers);
+  MyHousesN  = data["MyHousesNames"];
+  MyHousesID = data["MyHouses"];
+  MyHousesPics = data["MyHousesPics"]
+  SharedN  = data["SharedNames"];
+  SharedID = data["Shared"];
+  SharedPics = data["SharedPics"]
+  for(var i in MyHousesN){
+    DisplayNewContainer(MyHousesID[i], MyHousesN[i], MyHousesPics[i], "grid_container");
+  }
+  for(var i in SharedN){
+    DisplayNewContainer(SharedID[i], SharedN[i], SharedPics[i], "grid_container shared_container");
+  }
+  //Now the path
+  DisplayPathSection(data, '#actionSection');
+  init_fillGrid(viewType);
+}
+
+function DisplayGridContainers(containers){
+  data = JSON.parse(containers);
+  ItemsID  = data["Items"];
+  ItemsN  = data["ItemsNames"];
+  ItemsPics  = data["ItemsPics"];
+  ContainersID = data["Containers"];
+  ContainersN = data["ContainersNames"];
+  ContainerPics = data["ContainersPics"];
+  console.log(ItemsN);
+  for(var i in ContainersN){
+    DisplayNewContainer(ContainersID[i], ContainersN[i], ContainerPics[i], "grid_container");
+  }
+  for(var i in ItemsN){
+    DisplayNewContainer(ItemsID[i], ItemsN[i], ItemsPics[i], "grid_item");
+  }
+
+  DisplayPathSection(data, '#actionSection');
+  //lastly, initialize jquery
+  init_fillGrid(viewType);
+}
+
+//Displays the green path of containers
+function DisplayPathSection(data, IDofSection){
+  //first clear the action section
+  $(IDofSection).empty();
+  path = data["Path"];
+  path.unshift("Houses");
+  pathId = data["PathID"];
+  pathId.unshift("Null")
+  for( var i in path){
+    $('<span/>', {
+       class: 'label label-success path-label',
+      text: path[i],
+      id: pathId[i]
+    }).appendTo(IDofSection);
+  }
+}
+
+//========= helper functions
+function SubmitSearch(e){
+  e.preventDefault();
+  params = {}
+  params['searchStr']= $('#searchStr').val();
+  if(params['searchStr'] == ""){
+    return;
+  }
+
+  params['useName'] = $('#search-options_0').prop('checked');
+  params['useDesc'] = $('#search-options_1').prop('checked');
+  params['Category']  = $('#search-options_2').val();
+  params["containerId"] = CurrentContainerId;
+
+  p = JSON.stringify(params);
+  Search_request(params);
+
+}
+//when clicked a container, remove present,
+//query for new objects, "nav" viewType
+function clickedContainer(containerId){
+  deleteObjs();
+  BackStack.push(CurrentContainerId);
+  CurrentContainerId = containerId;
+  GetContainer_request();
+  console.log(containerId);
+}
+
+function clickedDropdownSubmit(){
+  //get all selected things
+  var ContainerIdList = [];
+  var ItemIdList = []
+  $(".selected.grid_container").each(function() { ContainerIdList.push($(this).attr("id")) });
+  $(".selected.grid_item").each(function() { ItemIdList.push($(this).attr("id")) });
+   if((ContainerIdList.length == 0) && (ItemIdList.length == 0) ){
+     return;
+   }
+  console.log(ContainerIdList)
+  console.log(ItemIdList)
+  //get action type
+  action = $("#dropdownDisplay").text();
+  switch(action){
+    case "Delete":
+      for(var i in ItemIdList){
+        DeleteItem_request(ItemIdList[i]);
+      }
+      for(var i in ContainerIdList){
+        DeleteContainer_request(ContainerIdList[i]);
+      }
+      break;
+    case "Share":
+      if(CurrentContainerId !="Null"){
+        window.alert("you can only share top level containers");
+      }
+      StartShare(ContainerIdList);
+      console.log("s");
+      
+      break;
+    case "Move":
+      console.log("mo");
+      StartMove(CurrentContainerId, ItemIdList, ContainerIdList);
+      $('#moveButt').click();
+      break;
+    case "Modify":
+      params = {};
+      params['ItemIdList'] = JSON.stringify(ItemIdList);
+      params['ContainerIDList'] = JSON.stringify(ContainerIdList);
+      $.post('/WS_GetObjectAttributes',params,function(data,Status){
+         data = JSON.parse(data);
+         console.log(data.ContainerList);
+         StartModify(data.ContainerList, data.ItemList)
+      });
+      //StartModify(CurrentContainerId, ItemIdList, ContainerIdList);
+      //$('#modifyButt').click();
+      break;
+
+    default:
+      console.log("no thing founds");
+
+  }
+
+}
+
+
+
+//pop backstack (back button)
+function popBackStack(){
+  deleteObjs();
+  containerId = BackStack.pop();
+  CurrentContainerId = containerId;
+  GetContainer_request();
+}
+
+//This draws an element in the grid
+//assumes global variables
+function DisplayNewContainer(containerId, name, picUrl, CLASS){
+  var img;
+  var imgPop;
+  //change echo function to Redraw.
+  // console.log("the url is " + picUrl);
+
+  //create the name text
+  text =$('<p/>', {
+    class : "col-md-12  text-center col-fixed",
+    text: name
+  });
+
+  //image wrapper
+  ImgWrap=$('<div/>', {
+    class: 'row row-centered'
+    //onClick: "clickedContainer(" + containerId+ ")"
+  });
+  TextWrap=$('<div/>', {
+    class: 'row row-centered'
+    //onClick: "clickedContainer(" + containerId+ ")"
+  });
+
+
+  //create the image 
+  img = $('<img/>', {
+    src: picUrl,
+    class: "col-md-12 col-centered col-fixed",
+    width: "200",
+    height: "200",
+    // text : name,
+    //onClick: "clickedContainer(" + containerId+ ")"
+  });
+  //for hoverzoom...
+  /*if( viewType == "view" ){
+    imgPop=$('<a/>', {
+      class: 'image-popup-no-margins',
+      href :  picUrl,
+      html : img
+      // text : name,
+      // onClick: "clickedContainer(" + containerId+ ")"
+    });
+  }
+  else{
+    imgPop = img
+  }*/
+
+  //create item wrapper div
+  var ItemDiv;
+  ItemDiv=$('<div/>', {
+    class: ('col-md-3 col-fixed ' + CLASS),
+    id: containerId
+  });
+     
+  //put things in wrappers
+
+  img.prependTo(ImgWrap);
+  text.prependTo(TextWrap);
+  
+  //put wrappers in the main item div
+  
+  TextWrap.prependTo(ItemDiv);
+  ImgWrap.prependTo(ItemDiv);
+  
+  //text.prependTo(div);
+
+  var $cell = ItemDiv.appendTo($('#conatainerPics'));
+}
+
+//every grid entry has class item
+function deleteObjs(){
+  $(".grid_container, .grid_item").remove();
+
+}
+
+//================$$$ JQ  REquests $$$$$
+//get base containers
+function GetHouses_request(){
+  // var params = {};
+  // params["Parent"] = containerId;
+  $.post('/WS_GetHouses',CurrentContainerId,function(data,Status){
+        // console.log(data);
+        if(data=="nologin"){
+          window.location.replace('/signin')
+        }
+        deleteObjs();
+        DisplayGridHouses(data);
+  });
+}
+
+function GetContainer_request(){
+  params = {}
+  params['ContainerID'] = CurrentContainerId
+  if(CurrentContainerId == "Null"){
+    deleteObjs();
+    GetHouses_request();
+    return;
+    //todo add backstack
+  }
+ $.post('/WS_GetContainer',params , function(data,Status){
+        // console.log(data);
+        DisplayGridContainers(data);
+  }); 
+}
+function ModifyObj_request(params){
+  $.post('/WS_ModifyObj', params, function(data, Status){
+    console.log("callback for modifyObj?")
+  });
+  if(isPictureChosen("modify-object")){
+    UploadPicture(params["ObjId"], params["ObjType"], 'modify-object');
+  }
+}
+
+function ShareContainer_Request(containerIDList, email){
+  params= {};
+  params['email'] = email;
+  params['ContainerIDList'] = JSON.stringify(containerIDList);
+  $.post('/WS_ShareContainers', params, function(data, Status){
+    console.log("callback for Share")
+  });
+}
+
+function Search_request(params){
+  console.log("clicked search");
+  $.post('/WS_Search', params, function(data, Status){
+     deleteObjs();
+     DisplayGridContainers(data);
+  });
+}
+
+//get all params
+function AddItem_request(){
+  params = GetParamsFromAddPopup('item');
+  if(CurrentContainerId == "Null"){
+    //todo pop up warning, cant add item to this
+    return;
+  }
+  params['Parent'] = CurrentContainerId;
+  $.post('/WS_AddItem', params, function(data, Status){
+    ItemId = data;
+    if(isPictureChosen("item")){
+      console.log("picture is chosen");
+      UploadPicture(ItemId, "item", "item");
+    }
+  });
+}
+
+function AddContainer_request(){
+  params = GetParamsFromAddPopup('container');
+  params['Parent'] = CurrentContainerId;
+  $.post('/WS_AddContainer', params, function(data, Status){
+    ContainerId = data;
+    if(isPictureChosen("container")){
+      console.log("picture is chosen");
+      UploadPicture(ContainerId, "container","container");
+    }
+  });
+}
+
+function DeleteItem_request(ItemId){
+  params = {};
+  params['ItemId'] = ItemId;
+  $.post('/WS_DeleteItem', params, function(data, Status){
+    console.log("delete item post... do stuff here if you want");
+  });
+}
+
+function DeleteContainer_request(ContainerId){
+  params = {};
+  params['ContainerId'] = ContainerId;
+  $.post('/WS_DeleteContainer', params, function(data, Status){
+    console.log("delete container post... do stuff here if you want");
+  });
+}
+
+
+
+function UploadPicture(ObjectId, ObjectType, formID){
+  var uploadURL;
+  params = {}
+  params['ObjId'] = ObjectId;
+  params['ObjType'] = ObjectType;
+
+  $.post('/WS_GetBlobUrl', params, function(data, Status){
+    console.log(data);
+    uploadURL = data;
+    //change  post-url?
+    //now start file upload' to UploadPictureL
+    //build post params
+    //do the submit
+
+    //$("#fileupload" + ObjectType).attr("data-url" , uploadURL);
+    $('#add-'+ formID+'-form').attr("action",uploadURL);
+    $("#fileupload" + formID+"Submit").click(); //upload file.
+    
+  });
+}
+
+function AppearSearch(event){
+  $('.search').addClass('search-on');
+}
+
+function AppearSearchOptions(event){
+  $('#search-options').fadeIn(200);
+}
+
+function DisappearSearch(event){
+  searchStr = $('#searchStr').val();
+  if(searchStr ==""){
+    $('.search').removeClass('search-on');
+    $('#search-options').fadeOut(300);
+  }else{
+  }
+}
+
+
+
+
+//get a obj's of specific container, given Id
+//test functions
+function TestAddContainerToCurrentContainer(){
+  params = {};
+  params['Parent'] = CurrentContainerId;
+  params['Desc']   = "nothing desc";
+  params['Name']   ="Test Added Container";
+
+  $.post('/WS_AddContainer',params,function(data,Status){});
+}
+function TestAddItemToCurrentContainer(){
+  params = {};
+  params['Parent'] = CurrentContainerId;
+  params['Desc']   = "nothing desc";
+  params['Name']   ="Test Item";
+
+  $.post('/WS_AddItem',params,function(data,Status){});
+}
+
+</script>
+

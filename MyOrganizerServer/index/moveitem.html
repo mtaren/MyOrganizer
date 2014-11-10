@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <form id="move-object-form" class="white-popup mfp-hide form-horizontal" action="/WS_Move">
+    <h1 class="text-center">Choose Container to Move to</h1>
+    <fieldset style="border:0;">
+     <div id="input fields" class="pull-left" width='480px'>
+        <!-- Path variable -->
+        <div class="row">
+            <input id="DestinationID" name="DestinationID" type="text" placeholder="Name" style="display: none">
+        </div>
+        <!-- Show Current Path -->
+        <div id='movePath' class='pad-bar text-left'></div>
+        <!-- Showing the containers -->
+        <div id='move-conatainers' class="row row-centered container"></div>
+        
+
+        <br><br>
+        <div>
+            <Button id="moveSubmitButt" class="btn btn-warning">  Move Item Here   </Button>
+        </div> 
+              
+     </div> 
+    </fieldset>
+  </form>
+</html>
+
+<script>
+
+//globals
+var MoveContainer = "Null"; //desitnation container
+var Items;
+var Containers; //containers that are being moved 
+
+function StartMove(ContainerId, ItemIDList, ContainerIDList){
+  Items = ItemIDList;
+  Containers = ContainerIDList;
+  console.log("starting move with ");
+  MoveContainer = ContainerId;
+  if(MoveContainer == "Null"){
+     GetHouses_requestMove();
+   }
+  else{
+    GetContainer_requestMove(ContainerId);
+  }
+}
+
+function DisplayMovePath(data, IDofSection){
+  //first clear the action section
+  $(IDofSection).empty();
+  path = data["Path"];
+  path.unshift("Houses");
+  pathId = data["PathID"];
+  pathId.unshift("Null")
+  for( var i in path){
+    $('<span/>', {
+       class: 'label label-success move-path-label',
+      text: path[i],
+      id: pathId[i]
+    }).appendTo(IDofSection);
+  }
+}
+
+function DisplayGridContainersMove(containers){
+  data = JSON.parse(containers);
+  ContainersID = data["Containers"];
+  ContainersN = data["ContainersNames"];
+  for(var i in ContainersN){
+    console.log(Containers)
+    console.log(ContainersID[i])
+    if (Containers.indexOf(ContainersID[i].toString()) >= 0) {
+      continue;
+    }
+    DisplayNewPathItem(ContainersID[i], ContainersN[i]);
+  }
+
+  DisplayMovePath(data, '#movePath');
+  //lastly, initialize jquery
+  init_moveGrid(viewType);
+}
+
+function init_moveGrid(viewType){
+   init_HoverEffects_for_move();
+   init_Nav_for_move();
+}
+function init_HoverEffects_for_move(){  
+   $('.move-container').mouseover(function(){
+      $(this).addClass('hover-effect');
+   });        
+   $('.move-container').mouseout(function(){
+      $(this).removeClass('hover-effect');
+   });
+}
+
+function init_Nav_for_move(){  
+  //clicking containers
+   $('.move-container').unbind( "click" );
+   $('.move-container').click(function(){
+    var contentPanelId = $(this).attr("id");
+      GetContainer_requestMove(contentPanelId);
+   });        
+
+   //clicking path labels
+   $('.move-path-label').click(function(){
+    var contentPanelId = $(this).attr("id");
+    $("#DestinationID").val(contentPanelId);
+    if(contentPanelId == "Null"){
+      MoveContainer = "Null";
+      GetHouses_requestMove();
+      return
+    }
+    GetContainer_requestMove(contentPanelId);
+   });
+}
+
+function DisplayNewPathItem(containerId, name){
+  text =$('<p/>', {
+    class : "col-md-12  text-center col-fixed",
+    text: name
+  });
+  TextWrap=$('<div/>', {
+    class: 'row row-centered'
+    //onClick: "clickedContainer(" + containerId+ ")"
+  });
+  var ItemDiv;
+  ItemDiv=$('<div/>', {
+    class: ('col-md-3 col-fixed move-container' ),
+    id: containerId
+  });
+  text.prependTo(TextWrap);
+  TextWrap.prependTo(ItemDiv);
+  ItemDiv.appendTo($('#move-conatainers'));
+}
+
+function GetContainer_requestMove(ContainerId){
+  MoveContainer = ContainerId;
+  params = {}
+  params['ContainerID'] = ContainerId
+  if(MoveContainer == "Null"){
+    $(".move-container").remove();
+    GetHouses_requestMove();
+    return;
+  }
+ $.post('/WS_GetContainer',params , function(data,Status){
+      // console.log(data);
+      $(".move-container").remove();
+      DisplayGridContainersMove(data);
+  }); 
+}
+
+function  GetHouses_requestMove(){
+  $.post('/WS_GetHouses',MoveContainer,function(data,Status){
+    $(".move-container").remove();
+    DisplayGridHousesMove(data);
+  });
+}
+
+function DisplayGridHousesMove(containers){
+  //TODO add shared and semiShared
+  data = JSON.parse(containers);
+  MyHousesN  = data["MyHousesNames"];
+  MyHousesID = data["MyHouses"];
+  MyHousesShareID = data["Shared"]
+  MyHousesSharedN = data["SharedNames"]
+
+  for(var i in MyHousesN){
+    // console.log(MyHousesN[i]);
+    DisplayNewPathItem(MyHousesID[i], MyHousesN[i]);
+  }
+  for(var i in MyHousesSharedN){
+    // console.log(MyHousesN[i]);
+    DisplayNewPathItem(MyHousesSharedID[i], MyHousesSharedN[i]);
+  }
+  DisplayMovePath(data, '#movePath');
+  init_moveGrid(viewType);
+}
+
+$(function() {
+      $('#move-object-form').submit(function(e) {
+          e.preventDefault();
+          console.log(MoveContainer);
+          if (MoveContainer == "Null"){
+            console.log("cannot move containers-items to user (null) level");
+            window.alert("cannot turn containers into houses, pick a valid location to move to");
+          }
+
+          for(var i in Containers){
+            MoveObject_request(Containers[i], "container");
+          }
+          for(var i in Items){
+            MoveObject_request(Items[i], "item");
+          }
+            
+          //for item in Items
+            //do a request to move item to destination container
+
+
+          $.magnificPopup.close();
+      });
+    });
+
+function MoveObject_request(ObjectID, ObjectType){
+  params = {}
+  params['ObjectID'] = ObjectID;
+  params['ObjectType'] = ObjectType;
+  params['DestinationID'] = MoveContainer;
+  
+ $.post('/WS_Move',params , function(data,Status){
+        console.log("insert callback here after the move is finished per object");
+  }); 
+}
+
+</script>
