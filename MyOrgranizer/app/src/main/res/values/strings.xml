@@ -5,4 +5,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+
+
+    <!--<string name="domain">https://organizer-python-758.appspot.com</string>-->
+    <string name="domain">http://localhost:10080</string>
+
 </resources>

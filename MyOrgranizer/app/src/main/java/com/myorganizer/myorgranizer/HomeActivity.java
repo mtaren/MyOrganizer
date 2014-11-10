@@ -36,12 +36,16 @@ public class HomeActivity extends Activity
 //    private static final String SCOPE = "audience:server:client_id:" + CLIENT_ID;
     private static final String SCOPE = "oauth2:" + USERPROFILE + " " + GPLUS_SCOPE;
 
+    private static String domain;
+    private static final String addr   = "/user";
+
     private static final int AUTH_REQUEST_CODE = 1;
     private Account mAccount;
     private Activity mActivity;
 
     protected void onCreate(Bundle savedInstanceState) {
         mActivity = this;
+        domain = this.getString(R.string.domain);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mAccount = AccountManager.get(mActivity).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)[0];
@@ -113,7 +117,7 @@ public class HomeActivity extends Activity
         protected String doInBackground(String... params) {
             try {
                 String token = params[0];
-                URL url = new URL("https://organizer-python-758.appspot.com/api/user");
+                URL url = new URL(domain + addr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("Authorization",  token);
 //                conn.setRequestProperty("Authorization", "Bearer " + token);
