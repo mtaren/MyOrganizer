@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.DownloadManager;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -43,6 +44,7 @@ import java.net.URL;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.OnFragmentInteractionListener, NotificationFragment.OnFragmentInteractionListener
         ,searchFragment.OnFragmentInteractionListener, ViewPagerFragment.OnFragmentInteractionListener, addObjectFragment.OnFragmentInteractionListener, ItemFragment.OnFragmentInteractionListener
+
 
 {   //test
     private static final String CLIENT_ID = "772912633150-i2n10flv608mt1clc2dikfktf9spdpqu.apps.googleusercontent.com";
@@ -80,7 +82,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
 
 //        Fragment fr = new ViewPagerFragment();
         Fragment fr = new ItemFragment();
-
         transaction.replace(R.id.container, fr);
         transaction.commit();
 
@@ -114,12 +115,20 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     @Override
     public void ChangeFragment(Fragment f, boolean backstack) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, f);
+
         if(backstack) {
+            Log.e("test","added");
             transaction.addToBackStack(null);
         }
+        transaction.replace(R.id.container, f);
         transaction.commit();
     }
+
+//    @Override
+//    public void BackOneFragment(){
+//        FragmentManager fm = getFragmentManager();
+//        fm.popBackStack();
+//    }
 
 
     @Override

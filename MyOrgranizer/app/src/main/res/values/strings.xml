@@ -12,4 +12,13 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
 
+    <!--strings for categories-->
+    <string name="Cat0">All</string>
+    <string name="Cat1">Apparel</string>
+    <string name="Cat2">Auto</string>
+    <string name="Cat3">Books</string>
+    <string name="Cat4">Tools</string>
+    <string name="Cat5">Toys</string>
+
+
 </resources>

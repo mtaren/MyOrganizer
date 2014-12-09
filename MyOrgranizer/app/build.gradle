@@ -14,7 +14,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+//            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,6 +40,11 @@ dependencies {
     //for viewpager
     compile 'com.android.support:support-v13:21.0.0'
 
+    //photoview
+    compile 'com.github.chrisbanes.photoview:library:1.2.3'
+
+    //another image thing.. maybe better for resize/centercrop
+    compile 'com.squareup.picasso:picasso:2.4.0'
 
     //for images async get from url
     compile 'com.koushikdutta.ion:ion:2.+'

@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+<RadioGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/rd_group">
+    <RadioButton
+        android:id="@+id/rd_1"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat0" />
+
+    <RadioButton
+        android:id="@+id/rd_2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat1" />
+    <RadioButton
+        android:id="@+id/rd_3"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat2" />
+    <RadioButton
+        android:id="@+id/rd_4"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat3" />
+    <RadioButton
+        android:id="@+id/rd_5"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat4" />
+    <RadioButton
+        android:id="@+id/rd_6"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/Cat5" />
+</RadioGroup>
+
+    <Button
+        android:id="@id/okButt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_group"
+        android:layout_centerInParent="true"
+        android:text="OK" />
+</RelativeLayout>

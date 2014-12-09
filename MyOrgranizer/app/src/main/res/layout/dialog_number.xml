@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:id="@+id/textdiag"
+android:layout_height="fill_parent"
+    >
+
+
+<NumberPicker
+    android:id="@+id/numberPicker"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:orientation="vertical"
+    android:scaleY=".8"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/numberPicker"
+    android:orientation="horizontal">
+    <Button
+        android:id="@+id/cancelButt"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="@string/cancel"
+        android:background="@drawable/buttonblue_100"
+        android:layout_marginRight="1dp"
+        />
+    <Button
+        android:id="@+id/okButt"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/buttonblue_100"
+        android:text="@string/ok"
+        android:layout_marginLeft="1dp"
+        />
+</LinearLayout>
+</RelativeLayout>
