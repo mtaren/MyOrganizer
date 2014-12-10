@@ -47,6 +47,7 @@ APP = webapp2.WSGIApplication([
     ('/WS_GetBlobUrl', WS_GetBlobUrl),
     ('/WS_GetPicture/([^/]+)?', WS_GetPicture),
     ('/WS_GetObjectAttributes', WS_GetObjectAttributes),
+    ('/WS_GetOneObjectAttributes', WS_GetOneObjectAttributes),
     #setters
     ('/WS_AddContainer', WS_AddContainer),
     ('/WS_AddPicture', WS_AddPicture),

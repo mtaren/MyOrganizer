@@ -1,7 +1,6 @@
 package com.myorganizer.myorgranizer;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,51 +13,38 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.koushikdutta.ion.Ion;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.squareup.picasso.Picasso;
-
-import static com.myorganizer.myorgranizer.DialogClasses.*;
 
 import org.apache.http.Header;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
+import static com.myorganizer.myorgranizer.DialogClasses.CATCODE;
+import static com.myorganizer.myorgranizer.DialogClasses.DESCCODE;
+import static com.myorganizer.myorgranizer.DialogClasses.DialogResult;
+import static com.myorganizer.myorgranizer.DialogClasses.NAMECODE;
+import static com.myorganizer.myorgranizer.DialogClasses.QTYCODE;
 
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ItemFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ItemFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ItemFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener{
+public class ContainerFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener{
+    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private final String TAG = "ItemFrag";
+    private final String TAG = "ContainerFrag";
     private static final String ARG_PARAM0 = "Type";
     private static final String ARG_PARAM1 = "name";
     private static final String ARG_PARAM2 = "desc";
     private static final String ARG_PARAM3 = "cat";
-    private static final String ARG_PARAM4 = "qty";
     private static final String ARG_PARAM5 = "containerId";
     private static final String ARG_PARAM6 = "PicUrl";
     private static final String ARG_PARAM7 = "Path";
@@ -77,14 +63,12 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
     private String mName;
     private String mDesc;
     private String mCat;
-    private int mQty;
 
     private String mId = null;
 
     private Button bName;
     private Button bDesc;
     private Button bCat;
-    private Button bQty;
 
     private TextView mTextview;
 
@@ -98,23 +82,27 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
     //submit stuff
     private String mSubmitUrl;
     private  static final String MODIFY_URL = "/WS_ModifyObj";
-    private  static final String ADDITEM_URL = "/WS_AddItem";
-
-
-
+    private  static final String ADDCONTAINER_URL = "/WS_AddContainer";
 
     private OnFragmentInteractionListener mListener;
 
-    //new instance
-    public static ItemFragment newInstance(String name, String desc, String cat, int qty,
-    String conatinerId, String PicUrl, String Path, String id) {
-        ItemFragment fragment = new ItemFragment();
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment ContainerFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ContainerFragment newInstance(String name, String desc, String cat,
+                                           String conatinerId, String PicUrl, String Path, String id) {
+        ContainerFragment fragment = new ContainerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM0, "edit");
         args.putString(ARG_PARAM1, name);
         args.putString(ARG_PARAM2, desc);
         args.putString(ARG_PARAM3, cat);
-        args.putInt(ARG_PARAM4, qty);
         args.putString(ARG_PARAM5, conatinerId);
         args.putString(ARG_PARAM6, PicUrl);
         args.putString(ARG_PARAM7, Path);
@@ -123,9 +111,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
 
         return fragment;
     }
-
-    public static ItemFragment newInstance(String conatinerId, String Path) {
-        ItemFragment fragment = new ItemFragment();
+    public static ContainerFragment newInstance(String conatinerId, String Path) {
+        ContainerFragment fragment = new ContainerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM0, "new");
         args.putString(ARG_PARAM5, conatinerId);
@@ -134,7 +121,8 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         return fragment;
     }
 
-    public ItemFragment() {
+
+    public ContainerFragment() {
         // Required empty public constructor
     }
 
@@ -148,7 +136,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
                 mName = getArguments().getString(ARG_PARAM1);
                 mDesc = getArguments().getString(ARG_PARAM2);
                 mCat = getArguments().getString(ARG_PARAM3);
-                mQty = getArguments().getInt(ARG_PARAM4);
                 mParentContainer= getArguments().getString(ARG_PARAM5);
                 mCurrentPhotoPath = getArguments().getString(ARG_PARAM6);
                 mPathStr= getArguments().getString(ARG_PARAM7);
@@ -159,11 +146,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
                 misImageOk = true;
                 misImageSelected = false;
             }else{
-                mSubmitUrl = ADDITEM_URL;
+                mSubmitUrl = ADDCONTAINER_URL;
                 mName = "Name";
                 mDesc = "Description";
                 mCat = "Category";
-                mQty = 1;
                 misNameOk= false;
                 misDescOk= false;
                 misCatOk = false;
@@ -176,12 +162,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.fragment_item, container, false);
+        View v = inflater.inflate(R.layout.fragment_container, container, false);
         mImage = (ImageView)  v.findViewById(R.id.image);
         mImage.setOnClickListener(this);
         this.setHasOptionsMenu(true);
@@ -196,7 +180,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         bName = (Button) v.findViewById(R.id.nameButt);
         bDesc = (Button) v.findViewById(R.id.descButt);
         bCat = (Button) v.findViewById(R.id.categoryButt);
-        bQty = (Button) v.findViewById(R.id.qtyButt);
 
         Button cam = (Button) v.findViewById(R.id.cameraButt);
         Button submit = (Button) v.findViewById(R.id.submitButt);
@@ -204,12 +187,10 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         bName.setText(mName);
         bDesc.setText(mDesc);
         bCat.setText(mCat);
-        bQty.setText(Integer.toString(mQty));
 
         bName.setOnClickListener(this);
         bDesc.setOnClickListener(this);
         bCat.setOnClickListener(this);
-        bQty.setOnClickListener(this);
         cam.setOnClickListener(this);
         submit.setOnClickListener(this);
         cam.setOnLongClickListener(this);
@@ -217,6 +198,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
 
         return v;
     }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -235,34 +217,33 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         mListener = null;
     }
 
-
-    //starting the dialogs
     @Override
     public void onClick(View v) {
         FragmentManager f = getActivity().getFragmentManager();
         switch(v.getId()){
             case R.id.nameButt:
-                TextDialog dialog = TextDialog.newInstance(NAMECODE, mName, "Name");
+                DialogClasses.TextDialog dialog = DialogClasses.TextDialog.newInstance(NAMECODE, mName, "Name");
                 dialog.setTargetFragment(this, NAMECODE);
                 dialog.show(f, "nameDialog");
                 break;
             case R.id.descButt:
-                TextDialog dialogDesc = TextDialog.newInstance(DESCCODE, mDesc, "Description");
+                DialogClasses.TextDialog dialogDesc = DialogClasses.TextDialog.newInstance(DESCCODE, mDesc, "Description");
                 dialogDesc.setTargetFragment(this, DESCCODE);
                 dialogDesc.show(f, "DescDialog");
                 break;
             case R.id.categoryButt:
-                RadioDialog dialogCat = RadioDialog.newInstance(CATCODE, mCat, "Category");
+                DialogClasses.RadioDialog dialogCat = DialogClasses.RadioDialog.newInstance(CATCODE, mCat, "Category");
                 dialogCat.setTargetFragment(this, CATCODE);
                 dialogCat.show(f, "CatDialog");
                 break;
             case R.id.qtyButt:
-                NumberDialog dialogQty = NumberDialog.newInstance(QTYCODE, mQty, "Quantity");
-                dialogQty.setTargetFragment(this, QTYCODE);
-                dialogQty.show(f, "QtyDialog");
+                //DialogClasses.NumberDialog dialogQty = DialogClasses.NumberDialog.newInstance(QTYCODE, mQty, "Quantity");
+                //dialogQty.setTargetFragment(this, QTYCODE);
+                //dialogQty.show(f, "QtyDialog");
+                Log.e(TAG, "container qty button for what...");
                 break;
             case R.id.cameraButt:
-                Log.e(TAG,"hello");
+                Log.e(TAG, "hello");
                 //dispatchGalleryIntent();
                 dispatchTakePictureIntent();
                 break;
@@ -275,7 +256,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
                 break;
 
             case R.id.image:
-                ImageDialog imgD = ImageDialog.newInstance(mCurrentPhotoPath);
+                DialogClasses.ImageDialog imgD = DialogClasses.ImageDialog.newInstance(mCurrentPhotoPath);
 //                imgD.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
                 //imgD.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
                 imgD.show(f, "ImgDialog");
@@ -287,7 +268,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    //getting the dialog results back
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e(TAG, "activity results");
@@ -305,8 +285,9 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
                 misDescOk = true;
                 break;
             case QTYCODE:
-                mQty = data.getIntExtra(DialogResult, 1);
-                bQty.setText(Integer.toString(mQty));
+                Log.e(TAG,"ah ya");
+//                mQty = data.getIntExtra(DialogResult, 1);
+//                bQty.setText(Integer.toString(mQty));
             case CATCODE:
                 mCat = data.getStringExtra(DialogResult);
                 ChangeButtonReady(bCat);
@@ -340,24 +321,29 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
 
     }
 
-    public void PerformItemRequest(String URL){
+    @Override
+    public boolean onLongClick(View v) {
+        dispatchGalleryIntent();
+        return false;
+    }
+
+    public void PerformItemRequest(String URL) {
         RequestParams rp = new RequestParams();
         rp.add("Parent", mParentContainer);
-        rp.add("Name",mName);
-        rp.add("Desc",mDesc);
-        rp.add("Category",mCat);
-        rp.add("Qty",Integer.toString(mQty));
+        rp.add("Name", mName);
+        rp.add("Desc", mDesc);
+        rp.add("Category", mCat);
+//        rp.add("Qty", Integer.toString(mQty));
         if(mSubmitUrl == MODIFY_URL) {
             rp.add("ObjId", mId);
-            rp.add("ObjType", "item");
+            rp.add("ObjType", "container");
         }
 
 
         mListener.PerformRequestPost(URL, rp, new ItemHandler());
-
     }
 
-    public class ItemHandler extends AsyncHttpResponseHandler{
+    public class ItemHandler extends AsyncHttpResponseHandler {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] response) {
             String ItemId =new String(response);
@@ -379,7 +365,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
     public void PerformItemUploadPhoto(String localFilePath, String ItemId){
         RequestParams params = new RequestParams();
         params.add("ObjId", ItemId);
-        params.add("ObjType", "item");
+        params.add("ObjType", "container");
         mListener.PerformRequestPost("/WS_GetBlobUrl", params, new BlobURLHandler());
     }
 
@@ -399,17 +385,17 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
                 e.printStackTrace();
             }
             httpClient.post(BlobUrl, params  ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                mListener.GoBack();
-            }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                    mListener.GoBack();
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                Log.e(TAG, "POST There was a problem in retrieving the url : " + e.toString());
-                Log.e(TAG,BlobUrl);
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                    Log.e(TAG, "POST There was a problem in retrieving the url : " + e.toString());
+                    Log.e(TAG,BlobUrl);
+                }
+            });
 
 
         }
@@ -419,22 +405,6 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
 
         }
     }
-
-    public class PhotoUploadHandler extends AsyncHttpResponseHandler{
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-            Log.e(TAG,"Photo uploaded..back");
-            mListener.GoBack();
-        }
-
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Log.e(TAG, "Photo not uploaded: There was a problem in retrieving the url : " + error.toString());
-        }
-
-    }
-
-
     public void ChangeButtonReady(Button b){
         b.setBackgroundResource(R.drawable.buttonblue_500);
         b.setTextColor(getActivity().getResources().getColor( R.color.white));
@@ -486,14 +456,16 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         return image;
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        //only long click the camera button
-        dispatchGalleryIntent();
-        return false;
-    }
-
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);

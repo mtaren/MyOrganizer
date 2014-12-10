@@ -73,15 +73,29 @@ class WS_GetObjectAttributes(webapp2.RequestHandler):
 
     self.response.write( json.dumps(resp))
 
+class WS_GetOneObjectAttributes(webapp2.RequestHandler):
+  def post(self):
+    objId = self.request.get("ObjId")
+    objType = self.request.get("ObjType")
+
+    if objType == "item":
+      obj = GetItem(objId)
+    if objType == "container":
+      obj = GetContainer(objId)
+
+    resp = GetObjDict(obj, objType)
+    resp["Path"] = "Homes/" + '/'.join(obj.Path[:-1])
+    self.response.write( json.dumps(resp))
+
 def GetObjDict(obj, objType):
   params ={}
   params["Name"]     = obj.Name
   params["PicUrl"]   = obj.PicUrl
   params["Category"] = obj.Category
   params["Desc"]     = obj.Desc
-  params["Id"]       = obj.key.id()
+  params["Id"]       = str(obj.key.id())
   if objType == "item":
-    params["Qty"] = obj.Qty
+    params["Qty"] =  obj.Qty
   return params
 
 
@@ -108,7 +122,7 @@ def GetThingsInContainer(ContainerID):
   d['ItemsNames'], d['ItemsPics']   = GetNamesFromIDs(container.Items, ItemObj, container)
   d['Containers']   = container.Containers
   d['ContainersNames'],d['ContainersPics']  = GetNamesFromIDs(container.Containers, ContainerObj, container)
-  d['Path']= container.Path
+  d['Path']= container.Path ##todo get names from path id
   d['PathID']= container.PathID
 
   return d

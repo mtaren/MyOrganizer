@@ -44,6 +44,7 @@ import java.net.URL;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.OnFragmentInteractionListener, NotificationFragment.OnFragmentInteractionListener
         ,searchFragment.OnFragmentInteractionListener, ViewPagerFragment.OnFragmentInteractionListener, addObjectFragment.OnFragmentInteractionListener, ItemFragment.OnFragmentInteractionListener
+    ,CABCallbacks.OnFragmentInteractionListener, ContainerFragment.OnFragmentInteractionListener
 
 
 {   //test
@@ -54,7 +55,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     //    private static final String SCOPE = "audience:server:client_id:" + CLIENT_ID;
     private static final String SCOPE = "oauth2:" + USERPROFILE + " " + GPLUS_SCOPE;
 
-    private static String domain;
+    public static String domain;
 //    private static final String addr = "/";
     private AsyncHttpClient httpClient = new AsyncHttpClient();
     private static String mToken;
@@ -62,11 +63,14 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     private static final int AUTH_REQUEST_CODE = 1;
     private Account mAccount;
     private Activity mActivity;
+    private Fragment mViewPagerFrag;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         mActivity = this;
         domain = this.getString(R.string.domain);
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(false);
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_home); //moved to after the token is reached
         mAccount = AccountManager.get(mActivity).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)[0];
@@ -80,9 +84,10 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //            Fragment fr = new ViewStreamsFragment(); // change this to login
 
-//        Fragment fr = new ViewPagerFragment();
-        Fragment fr = new ItemFragment();
-        transaction.replace(R.id.container, fr);
+        mViewPagerFrag = new ViewPagerFragment();
+//        Fragment fr = new ItemFragment();
+        transaction.replace(R.id.container, mViewPagerFrag);
+        transaction.addToBackStack(null);
         transaction.commit();
 
 
@@ -110,17 +115,50 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
         return mToken;
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
 
+        if (mViewPagerFrag.isHidden()) {
+            Log.e("test","hidden");
+            Fragment currF = (Fragment)getFragmentManager().findFragmentByTag("newWindow");
+            ft.remove(currF);
+            ft.show(mViewPagerFrag);
+            ft.commit();
+
+        } else {
+            Log.e("test","not");
+            super.onBackPressed();
+        }
+
+    }
+
+    @Override
+    public void GoBack(){
+        onBackPressed();
+    }
 
     @Override
     public void ChangeFragment(Fragment f, boolean backstack) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
 
         if(backstack) {
             Log.e("test","added");
             transaction.addToBackStack(null);
         }
         transaction.replace(R.id.container, f);
+        transaction.commit();
+    }
+
+    @Override
+    public void ShowFragment(Fragment f) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
+        transaction.hide(mViewPagerFrag);
+        transaction.add(R.id.container, f, "newWindow" );
         transaction.commit();
     }
 
@@ -152,7 +190,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
                 Log.e("test", email);
                 String token = GoogleAuthUtil.getToken(mActivity, email, SCOPE);
                 mToken = token;
-                Log.e("home",mToken);
+                Log.e("main_default",mToken);
                 return token;
             } catch (GooglePlayServicesAvailabilityException playEx) {
                 Dialog alert = GooglePlayServicesUtil.getErrorDialog(playEx.getConnectionStatusCode(), mActivity, AUTH_REQUEST_CODE);

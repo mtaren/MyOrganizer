@@ -3,10 +3,14 @@ package com.myorganizer.myorgranizer;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ClipData;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -47,6 +51,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //gridview adapter stuff
     GridView gridView;
     Button mButton;
+    String mPathStr;
 
     //json stuff
     HomeJson  homeJson;
@@ -54,6 +59,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     //select state/gridview
     SelectionManager mSm;
     String mParentContainerId;
+    String mCurrentContainerId = "Null";
     List<String> mObjectIds; //this is just all ids
 
 
@@ -82,12 +88,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.e(TAG, mCurrentContainerId);
+            Log.e(TAG, mParentContainerId);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+        this.setHasOptionsMenu(true);
         mButton = (Button) v.findViewById(R.id.up_one_level_butt);
         mButton.setVisibility(View.GONE);;
         mButton.setOnClickListener(this);
@@ -131,7 +142,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 if(mSm.actionMode == null) {
                     SelectedActionModeCallback callback = new SelectedActionModeCallback(
-                            gridView,mSm,getResources());
+                            gridView,mSm,getResources(), getActivity(), mCurrentContainerId);
 
                     mSm.actionMode = getActivity().startActionMode(callback);
                     return true;
@@ -144,6 +155,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.home, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        Log.e(TAG,mCurrentContainerId);
+        switch (item.getItemId()) {
+            case R.id.add_container:
+                Log.e(TAG,"add Container");
+                ContainerFragment containFrag= ContainerFragment.newInstance(mCurrentContainerId, mPathStr);
+                mListener.ShowFragment(containFrag);
+                return true;
+            case R.id.add_item:
+                Log.e(TAG,"ADd item");
+//                String Path = strJoin(homeJson.HouseNames.toArray(new String[homeJson.HouseNames.size()]),"/");
+//                Path = Path + "Homes/";
+                ItemFragment itemFrag= ItemFragment.newInstance(mCurrentContainerId, mPathStr);
+                mListener.ShowFragment(itemFrag);
+//                mListener.ChangeFragment(itemFrag, true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.e(TAG, "Saveinsteance called");
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -166,7 +210,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch( v.getId()){
             case R.id.up_one_level_butt:
-                UpdateGridView(mParentContainerId);
+                mCurrentContainerId = mParentContainerId;
+                UpdateGridView(mCurrentContainerId);
                 break;
             default:
                 Log.e(TAG, "no onclick registered");
@@ -184,6 +229,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         gridView.setAdapter(new EmptyAdapter());
         RequestParams r = new RequestParams();
+        mCurrentContainerId = ContainerId;
         r.add("ContainerID", ContainerId);
         mButton.setVisibility(View.VISIBLE);
         mListener.PerformRequestPost("/WS_GetContainer", r, new GetContainer());
@@ -205,6 +251,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mObjectIds.addAll(homeJson.SemiShareIds);
                 gridView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
                 gridView.setAdapter(new HomeAdapter(homeJson, getActivity()));
+                mPathStr = "Homes/";
 
 
             }
@@ -235,6 +282,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mSm= new SelectionManager(containerJson.ContainerIds.size());
                 gridView.setAdapter(new ContainerAdapter(containerJson, getActivity()));
                 mParentContainerId = getParent(containerJson);
+
+                mPathStr = "Homes/" + strJoin(containerJson.PathNames.toArray(new String[containerJson.PathNames.size()]), "/");
+                Log.e(TAG,mPathStr);
                 Log.e(TAG,"done");
             }
             catch (JsonParseException e)
@@ -261,12 +311,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             return "Null";
         }
     }
+
+    public static String strJoin(String[] aArr, String sSep) {
+        StringBuilder sbStr = new StringBuilder();
+        for (int i = 0, il = aArr.length; i < il; i++) {
+            if (i > 0)
+                sbStr.append(sSep);
+            sbStr.append(aArr[i]);
+        }
+        return sbStr.toString();
+    }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public String getToken();
         public void ChangeFragment(Fragment f, boolean backstack);
         public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);
         public void PerformRequestGet(String addr, AsyncHttpResponseHandler h);
+        public void ShowFragment(Fragment f);
     }
 
 

@@ -52,6 +52,7 @@ class WS_AddPicture(blobstore_handlers.BlobstoreUploadHandler):
     obj.PicUrl = "/WS_GetPicture/" + str(obj.Blobkey)
     obj.put()
 
+#check if top level container and shared.
 class WS_DeleteContainer(webapp2.RequestHandler):
   def post(self):
     containerID =  self.request.get("ContainerId")
@@ -88,8 +89,8 @@ class WS_ModifyObj(webapp2.RequestHandler):
       d['Qty'] = int(d['Qty'])
     if(objType == "container"):
       obj = GetContainer(objID)
-
     ModifyObject(obj, d)
+    self.response.write(objID)
 
 def ModifyObject(obj, params):
   for entry in params:

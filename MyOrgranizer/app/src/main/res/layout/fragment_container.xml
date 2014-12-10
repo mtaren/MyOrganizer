@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="0dp"
+    android:layout_margin="0dp">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="0dp"
+            android:layout_margin="0dp"
+            android:layout_weight="10">
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_camera"
+                />
+            <!--android:src="@drawable/big_image"-->
+        </LinearLayout>
+        <TextView
+            android:id="@+id/path"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="Path Goes here"
+            />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="0dp"
+            android:padding="0dp">
+            <Button
+                android:id="@+id/nameButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="1dp"
+                android:background="@drawable/buttonblue_100"
+                android:padding="0dp"
+                />
+            <Button
+                android:id="@+id/descButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="0dp"
+                android:background="@drawable/buttonblue_100"
+                android:layout_margin="1dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="0dp"
+            android:padding="0dp">
+            <Button
+                android:id="@+id/categoryButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="1dp"
+                android:background="@drawable/buttonblue_100"
+                android:padding="0dp"
+                />
+            <Button
+                android:id="@+id/qtyButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="0dp"
+                android:textColor="@color/white"
+                android:background="@drawable/buttonblue_500"
+                android:layout_margin="1dp"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="0dp"
+            android:padding="0dp">
+            <Button
+                android:id="@+id/cameraButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="1dp"
+                android:background="@drawable/buttonblue_500"
+                android:textColor="@color/white"
+                android:text="Change Picture"
+                android:padding="0dp"
+                />
+            <Button
+                android:id="@+id/submitButt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="0dp"
+                android:background="@drawable/buttonorange_800"
+                android:layout_margin="1dp"
+                android:textColor="@color/white"
+                android:text="@string/submit"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+</LinearLayout>
+

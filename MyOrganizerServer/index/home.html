@@ -572,7 +572,8 @@ function AddItem_request(){
   }
   params['Parent'] = CurrentContainerId;
   $.post('/WS_AddItem', params, function(data, Status){
-    ItemId = data;
+    data = JSON.parse(data);
+    ItemId = data[ItemId];
     if(isPictureChosen("item")){
       console.log("picture is chosen");
       UploadPicture(ItemId, "item", "item");

@@ -68,6 +68,49 @@ public class JsTypes {
             ContainerJson(){};
         }
 
+    public static class ItemObj{
+
+        @JsonProperty("Name")
+        public String name;
+
+        @JsonProperty("Desc")
+        public String Desc;
+        @JsonProperty("PicUrl")
+        public String picUrl;
+        @JsonProperty("Category")
+        public String cat;
+        @JsonProperty("Qty")
+        public int qty;
+        @JsonProperty("Id")
+        public String Id;
+        @JsonProperty("Path")
+        public String Path;
+
+
+        @JsonCreator
+        ItemObj(){};
+    }
+
+    public static class ContainerObj{
+
+        @JsonProperty("Name")
+        public String name;
+        @JsonProperty("Desc")
+        public String Desc;
+        @JsonProperty("PicUrl")
+        public String picUrl;
+        @JsonProperty("Category")
+        public String cat;
+        @JsonProperty("Id")
+        public String Id;
+        @JsonProperty("Path")
+        public String Path;
+
+
+        @JsonCreator
+        ContainerObj(){};
+    }
+
 
 
 
