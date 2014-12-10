@@ -29,7 +29,7 @@ public class ViewPagerFragment extends Fragment implements View.OnClickListener 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    public ViewPager mViewPager;
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -69,11 +69,11 @@ public class ViewPagerFragment extends Fragment implements View.OnClickListener 
         // Inflate the layout for this fragment
         // Locate the viewpager in activity_main.xml
         View v = inflater.inflate(R.layout.fragment_view_pager, container, false);
-        ViewPager viewPager = (ViewPager) v.findViewById(R.id.pager);
-        viewPager.setOffscreenPageLimit(3);
+        mViewPager = (ViewPager) v.findViewById(R.id.pager);
+        mViewPager.setOffscreenPageLimit(3);
         // Set the ViewPagerAdapter into ViewPager
         //viewPager.setAdapter(new ViewPagerAdapter(getActivity().getFragmentManager())); //not sure which one to use
-        viewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
+        mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
         return  v;
     }
 

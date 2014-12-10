@@ -63,18 +63,29 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     private static final int AUTH_REQUEST_CODE = 1;
     private Account mAccount;
     private Activity mActivity;
-    private Fragment mViewPagerFrag;
+
+
+    private ViewPagerFragment mViewPagerFrag; // for turning pages on viewpager
+    private HomeFragment mHomeFragment = null;
+    private boolean mRedrawGrid;
 
 
     protected void onCreate(Bundle savedInstanceState) {
-        mActivity = this;
-        domain = this.getString(R.string.domain);
-        getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setDisplayShowTitleEnabled(false);
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_home); //moved to after the token is reached
-        mAccount = AccountManager.get(mActivity).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)[0];
-        new GetAuthToken().execute(mAccount.name);
+
+
+//        if(savedInstanceState == null){
+            mActivity = this;
+            domain = this.getString(R.string.domain);
+            getActionBar().setDisplayShowHomeEnabled(false);
+            getActionBar().setDisplayShowTitleEnabled(false);
+            super.onCreate(savedInstanceState);
+    //        setContentView(R.layout.activity_home); //moved to after the token is reached
+            mAccount = AccountManager.get(mActivity).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)[0];
+            new GetAuthToken().execute(mAccount.name);
+
+//        }else {
+//            super.onCreate(savedInstanceState);
+//        }
 
 //
     }
@@ -116,6 +127,11 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     }
 
     @Override
+    public boolean isViewPagerHidden(){
+        return mViewPagerFrag.isHidden();
+    }
+
+    @Override
     public void onBackPressed()
     {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -127,6 +143,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
             ft.remove(currF);
             ft.show(mViewPagerFrag);
             ft.commit();
+            if(mRedrawGrid){
+                mHomeFragment.onActivityResult(HomeFragment.REDRAWGRID, 0, null);
+            }
 
         } else {
             Log.e("test","not");
@@ -138,6 +157,11 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     @Override
     public void GoBack(){
         onBackPressed();
+    }
+
+    @Override
+    public void ChangePage(int i){
+        mViewPagerFrag.mViewPager.setCurrentItem(i);
     }
 
     @Override
@@ -158,9 +182,35 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.addToBackStack(null);
         transaction.hide(mViewPagerFrag);
-        transaction.add(R.id.container, f, "newWindow" );
+        transaction.add(R.id.container, f, "newWindow");
         transaction.commit();
     }
+
+    @Override
+    public void SetHomeFragment(HomeFragment f) {
+        mHomeFragment = f;
+    }
+    @Override
+    public void unSetHomeFragment() {
+        mHomeFragment = null;
+    }
+    @Override
+    public void RedrawGridOnShow(){
+        mRedrawGrid = true;
+    }
+
+    @Override
+    public void HomeFragmentGetContainer(String containerId) {
+        Intent i = new Intent();
+        i.putExtra("test", containerId);
+        if(mHomeFragment != null) {
+            mHomeFragment.onActivityResult(HomeFragment.SEARCHTOHOME,10,i);
+        }else{
+            Log.e("homeActivity", "homefragment is null on homefraggetcontainer mlistener call" );
+        }
+    }
+
+
 
 //    @Override
 //    public void BackOneFragment(){
@@ -172,12 +222,12 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
     @Override
     public void PerformRequestPost(String addr, RequestParams params,AsyncHttpResponseHandler handler ) {
         httpClient.addHeader("Authorization", mToken);
-        httpClient.post(domain + addr, params,handler);
+        httpClient.post(domain + addr, params, handler);
     }
 
     public void PerformRequestGet(String addr, AsyncHttpResponseHandler handler ) {
         httpClient.addHeader("Authorization", mToken);
-        httpClient.get(domain + addr,handler);
+        httpClient.get(domain + addr, handler);
     }
 
     private class GetAuthToken extends AsyncTask<String, Void, String> {

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.SearchView;
 
@@ -59,7 +60,7 @@ public class searchFragment extends Fragment {
     //for gridview/selectionManager
     SelectionManager mSm;
     List mObjectIds;
-
+    JsTypes.ContainerJson mContainerJson;
 
 
     // TODO: Rename and change types and number of parameters
@@ -157,17 +158,33 @@ public class searchFragment extends Fragment {
         public void onSuccess(int statusCode, Header[] headers, byte[] response) {
             Log.e(TAG, new String(response));
 
-            JsTypes.ContainerJson containerJson = null;
             try {
-                containerJson = new ObjectMapper().readValue(response, JsTypes.ContainerJson.class);
+                mContainerJson = new ObjectMapper().readValue(response, JsTypes.ContainerJson.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mObjectIds = new ArrayList<String>(containerJson.ContainerIds);
-            mObjectIds.addAll(containerJson.ItemIds);
-            mSm= new SelectionManager(containerJson.ContainerIds.size());
-            mGridView.setAdapter(new GridAdapters.SearchAdapter(containerJson, getActivity()));
+            mObjectIds = new ArrayList<String>(mContainerJson.ContainerIds);
+            mObjectIds.addAll(mContainerJson.ItemIds);
+            mSm= new SelectionManager(mContainerJson.ContainerIds.size());
+            mGridView.setAdapter(new GridAdapters.SearchAdapter(mContainerJson, getActivity()));
             Log.e(TAG,"done");
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    if(position < mContainerJson.ContainerIds.size()){
+                        mListener.ChangePage(0);
+                        mListener.HomeFragmentGetContainer(mContainerJson.ContainerIds.get(position));
+                    }else{ //this is an item
+//                        mListener.HomeFragmentGetContainer(mContainerJson
+//                                .ItemIds.get(position-mContainerJson.ContainerIds.size()));
+                        //edit page
+                        Log.e(TAG, "clicked item");
+                    }
+
+
+                }
+            });
 
 
         }
@@ -180,6 +197,8 @@ public class searchFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);
+        public void ChangePage(int i);
+        public void HomeFragmentGetContainer(String containerId);
     }
 
 }

@@ -4,8 +4,10 @@ package com.myorganizer.myorgranizer;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
@@ -28,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.myorganizer.myorgranizer.DialogClasses.DialogResult;
+import static com.myorganizer.myorgranizer.DialogClasses.NAMECODE;
 import static com.myorganizer.myorgranizer.JsTypes.*;
 import static com.myorganizer.myorgranizer.GridAdapters.*;
 import static com.myorganizer.myorgranizer.CABCallbacks.*;
@@ -46,6 +51,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private static final String TAG ="Home";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final int SEARCHTOHOME = 10;
+    public static final int REDRAWGRID = 11;
 
 
     //gridview adapter stuff
@@ -54,7 +61,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     String mPathStr;
 
     //json stuff
-    HomeJson  homeJson;
+    HomeJson  homeJson; //dont need to queu this
+
+    BaseAdapter mAdapter; //used to queue adapters other wise stuff crashes
+
 
     //select state/gridview
     SelectionManager mSm;
@@ -178,6 +188,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 mListener.ShowFragment(itemFrag);
 //                mListener.ChangeFragment(itemFrag, true);
                 return true;
+            case R.id.refresh:
+                UpdateGridView(mCurrentContainerId);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -194,15 +207,31 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+            mListener.SetHomeFragment(this);
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
+        }
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e(TAG, "activity results");
+        switch (requestCode) {
+            case SEARCHTOHOME:
+                String containerId= data.getStringExtra("test");
+                UpdateGridView(containerId);
+                Log.e(TAG,"got "+ containerId);
+                break;
+            case REDRAWGRID://doesnt use intent data
+                gridView.setAdapter(mAdapter);
+            default:
+                Log.e(TAG, "unhandled onActivity Result");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener.unSetHomeFragment();
         mListener = null;
     }
 
@@ -240,18 +269,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         public void onSuccess(int statusCode, Header[] headers, byte[] response) {
             Log.e(TAG, new String(response));
 
+
             try
             {
                 homeJson= new ObjectMapper().readValue(response, HomeJson.class);
                 Log.e(TAG,"done");
-                mSm= new SelectionManager(homeJson.HouseIds.size() + homeJson.SemiShareIds.size() + homeJson.SemiShareIds.size());
+                mSm= new SelectionManager(homeJson.HouseIds.size() + homeJson.ShareIds.size() + homeJson.SemiShareIds.size());
                 mObjectIds = new ArrayList<String>();
                 mObjectIds.addAll(homeJson.HouseIds);
+                mObjectIds.addAll(homeJson.ShareIds);
                 mObjectIds.addAll(homeJson.SemiShareIds);
-                mObjectIds.addAll(homeJson.SemiShareIds);
-                gridView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-                gridView.setAdapter(new HomeAdapter(homeJson, getActivity()));
                 mPathStr = "Homes/";
+//                gridView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                if(mListener.isViewPagerHidden()){
+                    mListener.RedrawGridOnShow();
+                    mAdapter = new HomeAdapter(homeJson, getActivity());
+                    return;
+                }
+                gridView.setAdapter(new HomeAdapter(homeJson, getActivity()));
+
 
 
             }
@@ -274,18 +310,26 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] response) {
             Log.e(TAG, new String(response));
+
             try
             {
                 ContainerJson containerJson = new ObjectMapper().readValue(response, ContainerJson.class);
                 mObjectIds = new ArrayList<String>(containerJson.ContainerIds);
                 mObjectIds.addAll(containerJson.ItemIds);
                 mSm= new SelectionManager(containerJson.ContainerIds.size());
-                gridView.setAdapter(new ContainerAdapter(containerJson, getActivity()));
                 mParentContainerId = getParent(containerJson);
-
                 mPathStr = "Homes/" + strJoin(containerJson.PathNames.toArray(new String[containerJson.PathNames.size()]), "/");
                 Log.e(TAG,mPathStr);
                 Log.e(TAG,"done");
+
+                if(mListener.isViewPagerHidden()){
+                    mListener.RedrawGridOnShow();
+                    mAdapter = new ContainerAdapter(containerJson, getActivity());
+                    return;
+                }
+
+                gridView.setAdapter(new ContainerAdapter(containerJson, getActivity()));
+
             }
             catch (JsonParseException e)
             {
@@ -328,6 +372,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);
         public void PerformRequestGet(String addr, AsyncHttpResponseHandler h);
         public void ShowFragment(Fragment f);
+        public void SetHomeFragment(HomeFragment f);
+        public void unSetHomeFragment();
+        public boolean isViewPagerHidden();
+        public void RedrawGridOnShow();
+
     }
 
 
