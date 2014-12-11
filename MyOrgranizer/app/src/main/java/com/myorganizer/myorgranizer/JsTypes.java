@@ -85,6 +85,8 @@ public class JsTypes {
         public String Id;
         @JsonProperty("Path")
         public String Path;
+        @JsonProperty("ParentId")
+        public String ParentId;
 
 
         @JsonCreator
@@ -105,11 +107,39 @@ public class JsTypes {
         public String Id;
         @JsonProperty("Path")
         public String Path;
+        @JsonProperty("ParentId")
+        public String ParentId;
 
 
         @JsonCreator
         ContainerObj(){};
     }
+
+    public static class PendEventObj{
+
+        @JsonProperty("MessageTitle")
+        public String Title;
+        @JsonProperty("MessageBody")
+        public String Body;
+        @JsonProperty("Type")
+        public String Type;
+        @JsonProperty("Id")
+        public String Id;
+
+        @JsonCreator
+        PendEventObj(){};
+    }
+
+
+
+    public static class PendList{
+            //Ids
+            @JsonProperty("pendLists")
+            ArrayList<PendEventObj> pendList;
+
+            @JsonCreator
+            PendList(){};
+        }
 
 
 

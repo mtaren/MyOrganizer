@@ -1,15 +1,21 @@
 package com.myorganizer.myorgranizer;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersBaseAdapter;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersSimpleAdapter;
 
@@ -17,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static com.myorganizer.myorgranizer.JsTypes.*;
 
-/**
- * Created by Martin on 12/4/2014.
- */
+
 public class GridAdapters {
 
     //helper functions
@@ -158,8 +162,8 @@ public class GridAdapters {
         int [] numHeaders;
         ContainerAdapter(ContainerJson containerJson, Context context){
             this.context = context;
-            numContainers = containerJson.ContainerIds.size();
-            numItems = containerJson.ItemIds.size();
+            numContainers = containerJson.ContainerNames.size();
+            numItems = containerJson.ItemNames.size();
             list = new ArrayList<Img>();
             for(int i = 0; i < numContainers; i++){
                 list.add(new Img( containerJson.ContainerUrls.get(i), containerJson.ContainerNames.get(i)));}
@@ -256,6 +260,88 @@ public class GridAdapters {
             Ion.with(holder.myImage).load(path); // AMAZING!
 
             return row;
+        }
+
+
+    }
+
+    //TODO , mlistener never set to null
+    public static class PendAdapter extends BaseAdapter{
+        private OnFragmentInteractionListener mListener;
+        ArrayList<PendEventObj> list;
+        Context context;
+        PendAdapter(List<PendEventObj> data, Context context){
+            this.context = context;
+            list = new ArrayList<PendEventObj>(data);
+            mListener = (OnFragmentInteractionListener) context; //man...
+        }
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+        @Override
+        public Object getItem(int i) {
+            return list.get(i);
+        }
+        @Override
+        public long getItemId(int i) {return i;}
+
+        class ViewHolder{
+            TextView TitleText;
+            TextView BodyText;
+            Button   AcceptButon;
+            Button   DenyButton;
+            ViewHolder(View v){
+                TitleText= (TextView) v.findViewById(R.id.Title);
+                BodyText= (TextView) v.findViewById(R.id.Body);
+                AcceptButon = (Button) v.findViewById(R.id.Accept);
+                DenyButton = (Button) v.findViewById(R.id.Deny);
+            }
+        }
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            final int position =i;
+            View row = view;
+            ViewHolder holder;
+            if( row == null){
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.grid_adapter_pend_event,viewGroup,false); //
+                holder = new ViewHolder(row);
+                row.setTag(holder);
+            }
+            else{
+                holder = (ViewHolder) row.getTag();
+            }
+
+            holder.TitleText.setText(list.get(i).Title);
+            holder.TitleText.setTypeface(null, Typeface.BOLD);
+            holder.BodyText.setText(list.get(i).Body);
+            holder.BodyText.setTypeface(null, Typeface.ITALIC);
+
+            holder.AcceptButon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NotificationFragment.ResolovePendEvent_Request("Accept", list.get(position).Id, (NotificationFragment.OnFragmentInteractionListener) mListener);
+                    list.remove(position);
+                    notifyDataSetChanged();
+                }
+            });
+
+            holder.DenyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NotificationFragment.ResolovePendEvent_Request("Deny", list.get(position).Id, (NotificationFragment.OnFragmentInteractionListener) mListener);
+                    list.remove(position);
+                    notifyDataSetChanged();
+                }
+            });
+
+
+            return row;
+        }
+        public interface OnFragmentInteractionListener {
+            // TODO: Update argument type and
+            public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);
         }
 
 

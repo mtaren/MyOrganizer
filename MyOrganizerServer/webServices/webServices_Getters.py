@@ -44,6 +44,13 @@ class WS_GetBlobUrl(webapp2.RequestHandler):
     upload_url = blobstore.create_upload_url('/WS_AddPicture?id='+ str(objId)+"&objType="+str(objType))
     self.response.out.write(upload_url)
 
+class WS_GetBlobUrlBatchAdd(webapp2.RequestHandler):
+  def post(self):
+    email = GetUserEmail(self)
+    containerId =  self.request.get("containerId")
+    upload_url = blobstore.create_upload_url('/WS_AddPictureToBlankItem?email='+ email +"&cId="+containerId )
+    self.response.out.write(upload_url)
+
 class WS_GetPicture(blobstore_handlers.BlobstoreDownloadHandler):
   def get(self, photo_key):
     # print photo_key
@@ -73,6 +80,17 @@ class WS_GetObjectAttributes(webapp2.RequestHandler):
 
     self.response.write( json.dumps(resp))
 
+
+def GetObjectFromQRCode(QRcode):
+  container = ContainerObj.query(ContainerObj.QRCode == QRcode).get()
+  return str(container.key.id())
+
+class WS_GetIDfromQRCode(webapp2.RequestHandler):
+  def post(self):
+    QRcode = self.request.get("QRCode")
+    ObjId = GetObjectFromQRCode(QRcode)
+    self.response.write(ObjId)
+
 class WS_GetOneObjectAttributes(webapp2.RequestHandler):
   def post(self):
     objId = self.request.get("ObjId")
@@ -84,21 +102,9 @@ class WS_GetOneObjectAttributes(webapp2.RequestHandler):
       obj = GetContainer(objId)
 
     resp = GetObjDict(obj, objType)
-    resp["Path"] = "Homes/" + '/'.join(obj.Path[:-1])
+    # resp["Path"] = "Homes/" + '/'.join(obj.Path[:-1])
+    # resp["ParentId"] = str(GetParent(obj))
     self.response.write( json.dumps(resp))
-
-def GetObjDict(obj, objType):
-  params ={}
-  params["Name"]     = obj.Name
-  params["PicUrl"]   = obj.PicUrl
-  params["Category"] = obj.Category
-  params["Desc"]     = obj.Desc
-  params["Id"]       = str(obj.key.id())
-  if objType == "item":
-    params["Qty"] =  obj.Qty
-  return params
-
-
 
 #For home page, gets things to be displayed
 def GetThingsInHouses(email):
@@ -120,11 +126,19 @@ def GetThingsInContainer(ContainerID):
   d = {}
   d['Items']       = container.Items
   d['ItemsNames'], d['ItemsPics']   = GetNamesFromIDs(container.Items, ItemObj, container)
+  #sort
+  if len(d['ItemsNames']) >0:
+    d['ItemsNames'], d['ItemsPics'],d['Items'] = (list(t) for t in zip(*sorted(zip(d['ItemsNames'], d['ItemsPics'],d['Items']))))
+
   d['Containers']   = container.Containers
-  d['ContainersNames'],d['ContainersPics']  = GetNamesFromIDs(container.Containers, ContainerObj, container)
+  d['ContainersNames'],d['ContainersPics']  = GetNamesFromIDs(container.Containers, ContainerObj, container)  
+  if len(d['ContainersNames']) >0:#sort
+    d['ContainersNames'], d['ContainersPics'],d['Containers'] = (list(t) for t in zip(*sorted(zip(d['ContainersNames'], d['ContainersPics'],d['Containers']))))
+
   d['Path']= container.Path ##todo get names from path id
   d['PathID']= container.PathID
 
   return d
+
 
 

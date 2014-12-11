@@ -45,9 +45,11 @@ APP = webapp2.WSGIApplication([
     ('/WS_GetHouses', WS_GetHouses),
     ('/WS_GetContainer', WS_GetContainer),
     ('/WS_GetBlobUrl', WS_GetBlobUrl),
+    ('/WS_GetBlobUrlBatchAdd', WS_GetBlobUrlBatchAdd),
     ('/WS_GetPicture/([^/]+)?', WS_GetPicture),
     ('/WS_GetObjectAttributes', WS_GetObjectAttributes),
     ('/WS_GetOneObjectAttributes', WS_GetOneObjectAttributes),
+    ('/WS_GetIDfromQRCode', WS_GetIDfromQRCode),
     #setters
     ('/WS_AddContainer', WS_AddContainer),
     ('/WS_AddPicture', WS_AddPicture),
@@ -59,7 +61,12 @@ APP = webapp2.WSGIApplication([
     #penders
     ('/WS_FetchPendingEvents', WS_FetchPendingEvents),
     ('/WS_FetchNumPendingEvents', WS_FetchPendingEvents),
+    ('/WS_GetPendingEventData', WS_GetPendingEventData),
+    ('/WS_GetPendingEventDataBatchAdd', WS_GetPendingEventDataBatchAdd),
+    ('/WS_AddPictureToBlankItem', WS_AddPictureToBlankItem),
     ('/WS_ShareContainers', WS_ShareContainers),
+    ('/WS_AddPictureToBlankItem', WS_AddPictureToBlankItem),
+    
     ('/WS_ResolvePendEvent', WS_ResolvePendEvent),
     #search
     ('/WS_Search', WS_Search)

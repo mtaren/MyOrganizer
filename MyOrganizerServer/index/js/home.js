@@ -44,9 +44,38 @@ function isPictureChosen(objectType){
 /*****************************************************************/
 /******************* Init functions ******************************/
 /*****************************************************************/
+function uninit_Piczoom(){
+  if(viewType !="view"){
+    return;
+  }
+   $( ".imgs" ).each(function( index) {
+    $(this).unwrap();
+ });
+
+}
 
 //init piczoom- call this after adding all pics
 function init_PicZoom(){
+  if(viewType =="view"){
+    return;
+  }
+  if(viewType =="sel"){
+    uninit_SelClicks();
+  }
+  viewType = 'view';
+  $('.grid_item, .grid_container').unbind( "click" );
+
+  $( ".imgs" ).each(function( index) {
+    Mysrc =  $(this).attr('src');
+    //asdfasdf
+    zoom =$('<a/>', {
+      class : "image-popup-no-margins",
+      href: Mysrc,
+      text: name
+    });
+    $(this).wrap(zoom);
+ });
+
 $('.image-popup-no-margins').magnificPopup({
           type: 'image',
           closeOnContentClick: true,
@@ -80,11 +109,26 @@ function init_NavClicks(){
   if(viewType =="sel"){
     uninit_SelClicks();
   }
+  if(viewType =="view"){
+    uninit_Piczoom();
+  }
   $('.grid_item, .grid_container').unbind( "click" );
+  //clicking containers
    $('.grid_container').click(function(){
     var contentPanelId = $(this).attr("id");
       clickedContainer(contentPanelId);
-   });        
+   });  
+
+   //clicking items brings up modify
+   $('.grid_item').click(function(){
+     ItemList = [$(this).attr("id")];
+     params['ItemIdList'] = JSON.stringify(ItemList);
+     params['ContainerIDList'] = JSON.stringify([]);
+     $.post('/WS_GetObjectAttributes',params,function(data,Status){
+       data = JSON.parse(data);
+       StartModify(data.ContainerList, data.ItemList)
+      });
+   });  
 
    //clicking path labels
    $('.path-label').click(function(){
@@ -105,8 +149,11 @@ function init_SelClicks(){
   if(viewType == "sel"){
     return;
   }
+  if(viewType =="view"){
+    uninit_Piczoom();
+  }
   
-  $('.grid_item, .grid_container').unbind( "click" );
+  $('.grid_item, .grid_container, .path-label').unbind( "click" );
   //clicking containers
    $('.grid_item, .grid_container').mousedown(function(){
     if( $(this).hasClass('selected') ){
@@ -115,6 +162,9 @@ function init_SelClicks(){
       $(this).addClass('selected');
     }
   });
+  $('.grid_item, .grid_container').dblclick( function(){
+      $('.grid_item, .grid_container').addClass('selected');
+  });
   $("#SelectBar").fadeIn("fast");
   viewType = "sel"
 }
@@ -122,6 +172,7 @@ function init_SelClicks(){
 function uninit_SelClicks(){
   $('.selected').removeClass('selected');
   $('.grid_item, .grid_container').unbind( "mousedown" );
+  $('.grid_item, .grid_container').unbind( "dblclick" );
   $("#SelectBar").fadeOut();
 }
 
@@ -161,6 +212,7 @@ function init_PopUp(ID, URL,CLASS){
           }
         },
         open: function() {
+          $('.focusme').select();
           //console.log("opened")
           // Will fire when this exact popup is opened
           // this - is Magnific Popup object

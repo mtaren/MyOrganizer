@@ -30,7 +30,7 @@
       <script src="js/jquery.iframe-transport.js"></script>
       <script src="js/jquery.fileupload.js"></script>
       
-<!-- <Button id='addContainer'>
+<!--  <Button id='addContainer'>
           AddContainer
         </Button>
         <Button id='testbutt2'>
@@ -38,7 +38,7 @@
         </Button>
         <Button id='init'>
           init
-        </Button> -->
+        </Button>  -->
 
       <div class="content text-center width=1000px container">        
 
@@ -64,97 +64,98 @@
       </div>
        
    
-
-        <!-- this is the info section -->
-        
-        <div class="row container pad-bar">
+        <div id='scrolling-banner'>
+          <!-- this is the info section -->
           
-          <!-- row of blue buttons and action items -->
-          <div id='viewTypeSelect' class=' col-md-6 text-left'>
-              <!-- VuewTypeButtons -->
-              <div class="btn-group " data-toggle="buttons">
-                <label class="btn btn-primary active" id="navRadio">
-                  <input type="radio" name="options" id="option1" autocomplete="off" checked> Navigate
-                </label>
-                <label class="btn btn-primary" id="selRadio">
-                  <input type="radio" name="options" id="option2" autocomplete="off" > Select
-                </label>
-                <label class="btn btn-primary">
-                  <input type="radio" name="options" id="option3" autocomplete="off"> View
-                </label>
-                <!-- dropdown menu  (hidden at first)-->
-              <span class ="pad-left-10"  id="SelectBar">
-                <div class="btn-group">
-                    <button class="btn dropdown-toggle btn-info " data-toggle="dropdown" id="dropdownDisplay">Action...<span class="caret"></span>
-                    </button>
-
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" id = "dropDownMenu">
-                     <li><a tabindex="1" href="#">Delete</a></li>
-                     <li><a tabindex="2" href="#">Move</a></li>
-                     <li><a tabindex="3" href="#">Share</a></li>
-                     <li><a tabindex="4" href="#">Modify</a></li>
-                   </ul>
-                </div>
-
-
-                <!-- submit ubtton -->
-                <span>
-                  <button class="btn btn-warning" id="dropdownSubmit">
-                    Submit
-                  </button>
-                </span>
-              </span>
-
-              </div>
-          </div>
-
-          <!-- add things buttons -->
-
-          <div id='ActionItems' class=' col-md-6 text-right'>
+          <div class="row container pad-bar">
             
-            <button type="button" class="pull-right btn btn-default popup-with-form pad-left-5" href="#add-container-form">
-              <div id="addContainerForm"> </div>
-              <span class="glyphicon glyphicon-plus green"> </span> Container
-            </button>
-              
-            <button type="button" class="btn btn-default popup-add-item pull-right pad-left-5" href="#add-item-form">
-              <div id="addItemForm"> </div>
-              <span class="glyphicon glyphicon-plus green" aria-hidden="true"></span> Item
-            </button>
+            <!-- row of blue buttons and action items -->
+            <div id='viewTypeSelect' class=' col-md-6 text-left'>
+                <!-- VuewTypeButtons -->
+                <div class="btn-group " data-toggle="buttons">
+                  <label class="btn btn-primary active" id="navRadio">
+                    <input type="radio" name="options" id="option1" autocomplete="off" checked> Navigate
+                  </label>
+                  <label class="btn btn-primary" id="selRadio">
+                    <input type="radio" name="options" id="option2" autocomplete="off" > Select
+                  </label>
+                  <label class="btn btn-primary" id="viewRadio">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> View
+                  </label>
+                  </div>
+                  <!-- dropdown menu  (hidden at first)-->
+                <span class ="pad-left-10"  id="SelectBar">
+                  <div class="btn-group">
+                      <button class="btn dropdown-toggle btn-info " data-toggle="dropdown" id="dropdownDisplay">Action...<span class="caret"></span>
+                      </button>
 
-            <!-- Search -->
-            <form method="get" action="/search" id="search-form" class="pull-right search">
-              <input  id="searchStr" name="q" type="text" size="40" placeholder="Search..." />
-            </form>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" id = "dropDownMenu">
+                       <li><a tabindex="1" href="#">Delete</a></li>
+                       <li><a tabindex="2" href="#">Move</a></li>
+                       <li><a tabindex="3" href="#">Share</a></li>
+                       <li><a tabindex="4" href="#">Modify</a></li>
+                     </ul>
+                  </div>
+
+
+                  <!-- submit button -->
+                  <span>
+                    <button class="btn btn-warning" id="dropdownSubmit">
+                      Submit
+                    </button>
+                  </span>
+                </span>
+            </div>
+
+            <!-- add things buttons -->
+
+            <div id='ActionItems' class=' col-md-6 text-right'>
+              
+              <button type="button" class="pull-right btn btn-default popup-with-form pad-left-5" href="#add-container-form">
+                <div id="addContainerForm"> </div>
+                <span class="glyphicon glyphicon-plus green"> </span> Container
+              </button>
+                
+              <button type="button" class="btn btn-default popup-add-item pull-right pad-left-5" href="#add-item-form">
+                <div id="addItemForm"> </div>
+                <span class="glyphicon glyphicon-plus green" aria-hidden="true"></span> Item
+              </button>
+
+              <!-- Search -->
+              <form method="get" action="/search" id="search-form" class="pull-right search">
+                <input  id="searchStr" autocomplete="off" name="q" type="text" size="40" placeholder="Search..." />
+              </form>
+
+            </div>
 
           </div>
-
-        </div>
-        <!-- additional search options -->
-             <table id="search-options" class="pull-right">
-        <tr>
-            <td><input class='search-checkbox' id="search-options_0" type="checkbox" name="cl0" value="" checked /><label>Name </label></td>
-        </tr><tr>
-            <td><input class='search-checkbox'  id="search-options_1" type="checkbox" name="cl" value="" checked/><label>Description </label></td>
-        </tr><tr>
-            <td><label>Category  </label>
-              <select name="select" id='search-options_2'>
-                <option value="All">All</option>
-                <option value="None">None</option>
-                <option value="Apparel">Apparel</option>
-                <option value="Auto">Auto</option>
-                <option value="Books">Books</option>
-                <option value="Tools">Tools</option>
-                <option value="Toys">Toys</option>
-              </select></td>
-        </tr>
-        </table>
+          <!-- additional search options -->
+               <table id="search-options" class="pull-right">
+          <tr>
+              <td><input class='search-checkbox' id="search-options_0" type="checkbox" name="cl0" value="" checked /><label>Name </label></td>
+          </tr><tr>
+              <td><input class='search-checkbox'  id="search-options_1" type="checkbox" name="cl" value="" checked/><label>Description </label></td>
+          </tr><tr>
+              <td><label>Category  </label>
+                <select name="select" id='search-options_2'>
+                  <option value="All">All</option>
+                  <option value="None">None</option>
+                  <option value="Apparel">Apparel</option>
+                  <option value="Auto">Auto</option>
+                  <option value="Books">Books</option>
+                  <option value="Tools">Tools</option>
+                  <option value="Toys">Toys</option>
+                </select></td>
+          </tr>
+          </table>
+          
+           
         
-         
-      
 
-        <!-- this is the path display -->
-        <div id='actionSection' class='pad-bar text-left'></div>
+          <!-- this is the path display -->
+          <div id='actionSection' class='pad-bar text-left'></div>
+
+         </div><!--   scrolling banner -->
         <!-- this is the grid of containers/items -->
         <div id='conatainerPics' class="row row-centered container"></div>
         <!-- hidden buttons for move form -->
@@ -171,6 +172,23 @@
 
 <!-- Jquery here-->
 <script>
+
+$(window).scroll(function() {
+    t = $('#conatainerPics').offset();
+    t = t.top;
+
+    s = $(window).scrollTop();
+
+    d = t-s;
+
+    if (d < 0) {
+        $('#scrolling-banner').addClass('fixedz');
+        $('#scrolling-banner').addClass('paddingTopz');
+    } else {
+        $('#scrolling-banner').removeClass('fixedz');
+        $('#scrolling-banner').removeClass('paddingTopz');
+    }
+});
 
 $("#filebutton").click(function(){
   UploadPicture();
@@ -206,6 +224,7 @@ $(document).ready(function() {
   //init blue nav buttons
   $('#navRadio').click(init_NavClicks);
   $('#selRadio').click(init_SelClicks);
+  $('#viewRadio').click(init_PicZoom);
 
   //todo remove this, or reuse as function
   $('#addItemButt').click(function(){
@@ -254,6 +273,12 @@ function echo(){
 
 //global variables
 var CurrentContainerId = "Null"; //(houses)
+var DeleteContainers
+var numDeletecontainers
+var numDeleteItems
+var DeleteItems
+var iterContDel;
+var iterItemDel;
 var BackStack = []; //(houses)
 var viewType = "nav" // navigate/view/select
 
@@ -262,14 +287,16 @@ GetHouses_request(); // and display
 
 //-- add container button
 //var containerId = 0;
-$('#addContainer').click(function(){
-  console.log("clicked me");
-  TestAddContainerToCurrentContainer();
-});
-$('#testbutt2').click(function(){
-  console.log(isPictureChosen("item"));
+// $('#addContainer').click(function(){
+//   console.log("clicked me");
+//   TestAddContainerToCurrentContainer();
+// });
+// $('#testbutt2').click(function(){
   
-});
+//   init_PicZoom()
+// });
+
+
  
 $('#init').click(function(){
   console.log("nothing assigned to this");
@@ -382,12 +409,21 @@ function clickedDropdownSubmit(){
   action = $("#dropdownDisplay").text();
   switch(action){
     case "Delete":
-      for(var i in ItemIdList){
-        DeleteItem_request(ItemIdList[i]);
-      }
-      for(var i in ContainerIdList){
-        DeleteContainer_request(ContainerIdList[i]);
-      }
+      // for(var i in ItemIdList){
+      //   DeleteItem_request(ItemIdList[i]);
+      // }
+      // for(var i in ContainerIdList){
+      //   DeleteContainer_request(ContainerIdList[i]);
+      // }
+      DeleteContainers = ContainerIdList
+      numDeletecontainers = ContainerIdList.length
+      DeleteItems = ItemIdList
+      numDeleteItems = ItemIdList.length
+      iterContDel = 0;
+      iterItemDel = 0;
+      
+      DeleteObjects_request();
+      
       break;
     case "Share":
       if(CurrentContainerId !="Null"){
@@ -452,7 +488,7 @@ function DisplayNewContainer(containerId, name, picUrl, CLASS){
     //onClick: "clickedContainer(" + containerId+ ")"
   });
   TextWrap=$('<div/>', {
-    class: 'row row-centered'
+    class: 'row row-centered pad0'
     //onClick: "clickedContainer(" + containerId+ ")"
   });
 
@@ -460,30 +496,12 @@ function DisplayNewContainer(containerId, name, picUrl, CLASS){
   //create the image 
   img = $('<img/>', {
     src: picUrl,
-    class: "col-md-12 col-centered col-fixed",
-    width: "200",
-    height: "200",
-    // text : name,
-    //onClick: "clickedContainer(" + containerId+ ")"
+    class: "col-md-12 col-centered col-fixed crop-center imgs"
   });
-  //for hoverzoom...
-  /*if( viewType == "view" ){
-    imgPop=$('<a/>', {
-      class: 'image-popup-no-margins',
-      href :  picUrl,
-      html : img
-      // text : name,
-      // onClick: "clickedContainer(" + containerId+ ")"
-    });
-  }
-  else{
-    imgPop = img
-  }*/
 
-  //create item wrapper div
   var ItemDiv;
   ItemDiv=$('<div/>', {
-    class: ('col-md-3 col-fixed ' + CLASS),
+    class: ('col-md-2 col-fixed ' + CLASS),
     id: containerId
   });
      
@@ -543,6 +561,8 @@ function ModifyObj_request(params){
   });
   if(isPictureChosen("modify-object")){
     UploadPicture(params["ObjId"], params["ObjType"], 'modify-object');
+  }else{
+    clickedContainer(CurrentContainerId);
   }
 }
 
@@ -572,11 +592,12 @@ function AddItem_request(){
   }
   params['Parent'] = CurrentContainerId;
   $.post('/WS_AddItem', params, function(data, Status){
-    data = JSON.parse(data);
-    ItemId = data[ItemId];
+    ItemId = data;
     if(isPictureChosen("item")){
       console.log("picture is chosen");
       UploadPicture(ItemId, "item", "item");
+    }else{
+      clickedContainer(CurrentContainerId);
     }
   });
 }
@@ -589,6 +610,12 @@ function AddContainer_request(){
     if(isPictureChosen("container")){
       console.log("picture is chosen");
       UploadPicture(ContainerId, "container","container");
+    }else{
+      if(CurrentContainerId != "Null"){
+        clickedContainer(CurrentContainerId);
+      }else{
+        GetHouses_request();
+      }
     }
   });
 }
@@ -597,6 +624,7 @@ function DeleteItem_request(ItemId){
   params = {};
   params['ItemId'] = ItemId;
   $.post('/WS_DeleteItem', params, function(data, Status){
+    DeleteObjects_request();
     console.log("delete item post... do stuff here if you want");
   });
 }
@@ -605,8 +633,22 @@ function DeleteContainer_request(ContainerId){
   params = {};
   params['ContainerId'] = ContainerId;
   $.post('/WS_DeleteContainer', params, function(data, Status){
+    
+    DeleteObjects_request();
     console.log("delete container post... do stuff here if you want");
   });
+}
+
+
+
+function DeleteObjects_request(){
+  if( numDeletecontainers >iterContDel){
+     DeleteContainer_request(DeleteContainers[iterContDel++]);
+  }else if(numDeleteItems >iterItemDel ){
+    DeleteItem_request(DeleteItems[iterItemDel++]);
+  }else{
+    clickedContainer(CurrentContainerId);
+  }
 }
 
 

@@ -27,6 +27,10 @@
     <item name="gOrange800" type="color">#FFEF6C00</item>
     <item name="gOrange500" type="color">#FFFF9800</item>
 
+    <!--Green -->
+    <item name="gGreen500" type="color">#FF4CAF50</item>
+    <item name="gGreen800" type="color">#FF2E7D32</item>
+
 
 
 

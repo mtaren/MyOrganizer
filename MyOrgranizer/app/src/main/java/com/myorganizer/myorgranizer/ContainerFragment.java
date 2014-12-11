@@ -36,6 +36,8 @@ import static com.myorganizer.myorgranizer.DialogClasses.DialogResult;
 import static com.myorganizer.myorgranizer.DialogClasses.NAMECODE;
 import static com.myorganizer.myorgranizer.DialogClasses.QTYCODE;
 
+import static com.myorganizer.myorgranizer.ScalingUtilities.ScaleFileForUpload;
+
 
 public class ContainerFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener{
     // TODO: Rename parameter arguments, choose names that match
@@ -63,12 +65,14 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
     private String mName;
     private String mDesc;
     private String mCat;
+    private String mQRCode;
 
     private String mId = null;
 
     private Button bName;
     private Button bDesc;
     private Button bCat;
+    private Button bQr;
 
     private TextView mTextview;
 
@@ -165,6 +169,7 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().getActionBar().hide();
         View v = inflater.inflate(R.layout.fragment_container, container, false);
         mImage = (ImageView)  v.findViewById(R.id.image);
         mImage.setOnClickListener(this);
@@ -180,6 +185,7 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
         bName = (Button) v.findViewById(R.id.nameButt);
         bDesc = (Button) v.findViewById(R.id.descButt);
         bCat = (Button) v.findViewById(R.id.categoryButt);
+        bQr = (Button) v.findViewById(R.id.qrButt);
 
         Button cam = (Button) v.findViewById(R.id.cameraButt);
         Button submit = (Button) v.findViewById(R.id.submitButt);
@@ -191,9 +197,16 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
         bName.setOnClickListener(this);
         bDesc.setOnClickListener(this);
         bCat.setOnClickListener(this);
+        bQr.setOnClickListener(this);
         cam.setOnClickListener(this);
         submit.setOnClickListener(this);
         cam.setOnLongClickListener(this);
+
+        if(misNameOk){
+            ChangeButtonReady(bName);
+            ChangeButtonReady(bDesc);
+            ChangeButtonReady(bCat);
+        }
 
 
         return v;
@@ -236,11 +249,12 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
                 dialogCat.setTargetFragment(this, CATCODE);
                 dialogCat.show(f, "CatDialog");
                 break;
-            case R.id.qtyButt:
-                //DialogClasses.NumberDialog dialogQty = DialogClasses.NumberDialog.newInstance(QTYCODE, mQty, "Quantity");
-                //dialogQty.setTargetFragment(this, QTYCODE);
-                //dialogQty.show(f, "QtyDialog");
-                Log.e(TAG, "container qty button for what...");
+            case R.id.qrButt:
+                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");//for Qr code, its "QR_CODE_MODE" instead of "PRODUCT_MODE"
+                intent.putExtra("SAVE_HISTORY", false);//this stops saving ur barcode in barcode scanner app's history
+                startActivityForResult(intent, 0);
+
                 break;
             case R.id.cameraButt:
                 Log.e(TAG, "hello");
@@ -284,10 +298,6 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
                 ChangeButtonReady(bDesc);
                 misDescOk = true;
                 break;
-            case QTYCODE:
-                Log.e(TAG,"ah ya");
-//                mQty = data.getIntExtra(DialogResult, 1);
-//                bQty.setText(Integer.toString(mQty));
             case CATCODE:
                 mCat = data.getStringExtra(DialogResult);
                 ChangeButtonReady(bCat);
@@ -300,6 +310,7 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
             Log.e(TAG, mCurrentPhotoPath);
             misImageSelected = true;
             misImageOk = true;
+            mCurrentPhotoPath = ScaleFileForUpload(mCurrentPhotoPath);
             Ion.with(mImage).load(mCurrentPhotoPath); // AMAZING!
             Log.e(TAG,"OK");
         }else if(requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK){
@@ -315,7 +326,20 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
             misImageOk = true;
             mCurrentPhotoPath = cursor.getString(columnIndex);
             cursor.close();
+            mCurrentPhotoPath = ScaleFileForUpload(mCurrentPhotoPath);
             Ion.with(mImage).load(mCurrentPhotoPath); // AMAZING!
+        }
+        if (requestCode == 0) {
+            if (resultCode == Activity.RESULT_OK) {
+
+                String contents = data.getStringExtra("SCAN_RESULT"); //this is the result
+                mQRCode = contents;
+                Log.e(TAG,contents);
+            } else
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Log.e(TAG,"handle cancle");
+                // Handle cancel
+            }
         }
 
 
@@ -333,6 +357,7 @@ public class ContainerFragment extends Fragment implements View.OnClickListener,
         rp.add("Name", mName);
         rp.add("Desc", mDesc);
         rp.add("Category", mCat);
+        rp.add("QRCode", mQRCode);
 //        rp.add("Qty", Integer.toString(mQty));
         if(mSubmitUrl == MODIFY_URL) {
             rp.add("ObjId", mId);

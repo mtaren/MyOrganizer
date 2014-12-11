@@ -27,6 +27,7 @@ class ContainerObj(ndb.Model):
   Public = ndb.BooleanProperty(required=False, default=False)
   Blobkey= ndb.BlobKeyProperty(required=False, default=None)
   Containers = ndb.PickleProperty(required=True,default=[])
+  QRCode = ndb.StringProperty(required=True, default="")
   
 
 class ItemObj(ndb.Model):
@@ -77,7 +78,7 @@ def GetUserObj(email):
   log("checking for " +  email)
   if usr == None: 
     log("no user found with email " +  email)
-    usr = UserObj(UserEmail = email)
+    usr = UserObj(UserEmail = email.lower())
     #usr = usr.put()
     return usr
   else:
@@ -90,16 +91,19 @@ def GetParent(Obj):
   if len(Obj.PathID) > 1:
     return GetContainer(Obj.PathID[-2])
   else:
-    return None
+    return "Null"
 
 def RemoveFromParent(Obj, ObjType):
   objID = int(Obj.key.id())
   Parent = GetParent(Obj)
   if ObjType =="item":
-    Parent.Items.remove(objID)
+    if str(objID) in Parent.Items:
+      Parent.Items.remove(str(objID)) 
+    else:
+      Parent.Items.remove(objID)    
     Parent.put()
   if ObjType =="container":
-    if Parent == None: #no parent have to get user
+    if Parent == "Null": #no parent have to get user
       usr = GetUserObj(Obj.Owner)
       if objID in usr.Containers:
         usr.Containers.remove(objID)
@@ -107,7 +111,12 @@ def RemoveFromParent(Obj, ObjType):
         usr.Shared.remove(objID)
       usr.put()
     else:
-      Parent.Containers.remove(objID)
+      log(Parent.Containers)
+      log(objID)
+      if str(objID) in Parent.Containers:
+        Parent.Containers.remove(str(objID)) 
+      else:
+        Parent.Containers.remove(objID)
       Parent.put()
 
 #if you cant find it in shared, remove it.
@@ -181,6 +190,22 @@ def ObjectsToJson(ItemList, ContainerList):
   return json.dumps(params)
 
 
+def GetPendEventMatchParams(PendType, usr, params):
+  for pendId in usr.PendingEvents:
+    pend = GetPendingEvent(pendId)
+    found = True
+    for key in params:
+      if key not in pend.Data:
+        log(key + " not in pendData")
+        found = False
+        break
+      if params[key] != pend.Data[key]:
+        log(str(params[key] + " not equal" + str(pend.Data[key])))
+        found = False
+        break
+    if found == True:
+      return pend
+  return None
 
 
 def GetContainer(Id):
@@ -199,6 +224,19 @@ def buildDictFromPostParams(request):
   for arg in arguments:
     d[arg] = request.get(arg)
   return d
+
+def GetObjDict(obj, objType):
+  params ={}
+  params["Name"]     = obj.Name
+  params["PicUrl"]   = obj.PicUrl
+  params["Category"] = obj.Category
+  params["Desc"]     = obj.Desc
+  params["Id"]       = str(obj.key.id())
+  params["Path"] = "Homes/" + '/ '.join(obj.Path[:-1])
+  params["ParentId"] = str(GetParent(obj))
+  if objType == "item":
+    params["Qty"] =  obj.Qty
+  return params
 
 
 

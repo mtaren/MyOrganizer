@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,7 +45,7 @@ import java.net.URL;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.OnFragmentInteractionListener, NotificationFragment.OnFragmentInteractionListener
         ,searchFragment.OnFragmentInteractionListener, ViewPagerFragment.OnFragmentInteractionListener, addObjectFragment.OnFragmentInteractionListener, ItemFragment.OnFragmentInteractionListener
-    ,CABCallbacks.OnFragmentInteractionListener, ContainerFragment.OnFragmentInteractionListener
+    ,CABCallbacks.OnFragmentInteractionListener, ContainerFragment.OnFragmentInteractionListener, GridAdapters.PendAdapter.OnFragmentInteractionListener
 
 
 {   //test
@@ -78,6 +79,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
             domain = this.getString(R.string.domain);
             getActionBar().setDisplayShowHomeEnabled(false);
             getActionBar().setDisplayShowTitleEnabled(false);
+            disableShowHideAnimation(getActionBar());
             super.onCreate(savedInstanceState);
     //        setContentView(R.layout.activity_home); //moved to after the token is reached
             mAccount = AccountManager.get(mActivity).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)[0];
@@ -139,6 +141,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
 
         if (mViewPagerFrag.isHidden()) {
             Log.e("test","hidden");
+            getActionBar().show();
             Fragment currF = (Fragment)getFragmentManager().findFragmentByTag("newWindow");
             ft.remove(currF);
             ft.show(mViewPagerFrag);
@@ -179,6 +182,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
 
     @Override
     public void ShowFragment(Fragment f) {
+        getActionBar().show();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.addToBackStack(null);
         transaction.hide(mViewPagerFrag);
@@ -272,6 +276,29 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.OnFra
                 StartApp();
 
 
+            }
+        }
+    }
+
+    public static void disableShowHideAnimation(ActionBar actionBar) {
+        try
+        {
+            actionBar.getClass().getDeclaredMethod("setShowHideAnimationEnabled", boolean.class).invoke(actionBar, false);
+        }
+        catch (Exception exception)
+        {
+            try {
+                Field mActionBarField = actionBar.getClass().getSuperclass().getDeclaredField("mActionBar");
+                mActionBarField.setAccessible(true);
+                Object icsActionBar = mActionBarField.get(actionBar);
+                Field mShowHideAnimationEnabledField = icsActionBar.getClass().getDeclaredField("mShowHideAnimationEnabled");
+                mShowHideAnimationEnabledField.setAccessible(true);
+                mShowHideAnimationEnabledField.set(icsActionBar,false);
+                Field mCurrentShowAnimField = icsActionBar.getClass().getDeclaredField("mCurrentShowAnim");
+                mCurrentShowAnimField.setAccessible(true);
+                mCurrentShowAnimField.set(icsActionBar,null);
+            }catch (Exception e){
+                //....
             }
         }
     }

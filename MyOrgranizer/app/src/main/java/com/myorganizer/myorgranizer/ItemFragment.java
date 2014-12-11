@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -39,7 +40,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
+import static com.myorganizer.myorgranizer.ScalingUtilities.ScaleFileForUpload;
 
 
 
@@ -180,7 +181,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        getActivity().getActionBar().hide();
         View v = inflater.inflate(R.layout.fragment_item, container, false);
         mImage = (ImageView)  v.findViewById(R.id.image);
         mImage.setOnClickListener(this);
@@ -214,6 +215,12 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
         submit.setOnClickListener(this);
         cam.setOnLongClickListener(this);
 
+        //set buttons to good if in edit mode
+        if(misNameOk){
+            ChangeButtonReady(bName);
+            ChangeButtonReady(bDesc);
+            ChangeButtonReady(bCat);
+        }
 
         return v;
     }
@@ -319,6 +326,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
             Log.e(TAG, mCurrentPhotoPath);
             misImageSelected = true;
             misImageOk = true;
+            mCurrentPhotoPath = ScaleFileForUpload(mCurrentPhotoPath);
             Ion.with(mImage).load(mCurrentPhotoPath); // AMAZING!
             Log.e(TAG,"OK");
         }else if(requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK){
@@ -334,6 +342,7 @@ public class ItemFragment extends Fragment implements View.OnClickListener, View
             misImageOk = true;
             mCurrentPhotoPath = cursor.getString(columnIndex);
             cursor.close();
+            mCurrentPhotoPath = ScaleFileForUpload(mCurrentPhotoPath);
             Ion.with(mImage).load(mCurrentPhotoPath); // AMAZING!
         }
 

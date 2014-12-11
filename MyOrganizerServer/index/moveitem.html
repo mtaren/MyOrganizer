@@ -31,6 +31,11 @@ var MoveContainer = "Null"; //desitnation container
 var Items;
 var Containers; //containers that are being moved 
 
+var iterCont ;
+var iterItem ;
+var numContainers ;
+var numItems ;
+
 function StartMove(ContainerId, ItemIDList, ContainerIDList){
   Items = ItemIDList;
   Containers = ContainerIDList;
@@ -182,16 +187,23 @@ $(function() {
             console.log("cannot move containers-items to user (null) level");
             window.alert("cannot turn containers into houses, pick a valid location to move to");
           }
+          //cant do this, makes the data inconsistant
+          // for(var i in Containers){
+          //   MoveObject_request(Containers[i], "container");
+          // }
+          // for(var i in Items){
+          //   MoveObject_request(Items[i], "item");
+          // }
+          iterCont = 0;
+          iterItem = 0;
+          numContainers = Items.length  
+          numItems = Containers.length
+          if( numContainers >0){
+             MoveObject_request(Containers[iterCont++], "container");
+          }else if(numItems >0 ){
+            MoveObject_request(Items[iterItem++], "item");
+          }
 
-          for(var i in Containers){
-            MoveObject_request(Containers[i], "container");
-          }
-          for(var i in Items){
-            MoveObject_request(Items[i], "item");
-          }
-            
-          //for item in Items
-            //do a request to move item to destination container
 
 
           $.magnificPopup.close();
@@ -206,6 +218,13 @@ function MoveObject_request(ObjectID, ObjectType){
   
  $.post('/WS_Move',params , function(data,Status){
         console.log("insert callback here after the move is finished per object");
+        if( numContainers >iterCont){
+             MoveObject_request(Containers[iterCont++], "container");
+          }else if(numItems >iterItem ){
+            MoveObject_request(Items[iterItem++], "item");
+          }else{
+            clickedContainer(CurrentContainerId);
+          }
   }); 
 }
 

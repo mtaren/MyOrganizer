@@ -35,11 +35,11 @@
         <TextView
             android:id="@+id/path"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="20dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="18sp"
-            android:text="Path Goes here"
+            android:textSize="16sp"
+
             />
         <LinearLayout
             android:orientation="horizontal"
@@ -86,7 +86,7 @@
                 android:padding="0dp"
                 />
             <Button
-                android:id="@+id/qtyButt"
+                android:id="@+id/qrButt"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -94,6 +94,7 @@
                 android:textColor="@color/white"
                 android:background="@drawable/buttonblue_500"
                 android:layout_margin="1dp"
+                android:text="QR Code"
                 />
 
         </LinearLayout>
@@ -112,7 +113,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="1dp"
-                android:background="@drawable/buttonblue_500"
+                android:background="@drawable/buttongreen_500"
                 android:textColor="@color/white"
                 android:text="Change Picture"
                 android:padding="0dp"

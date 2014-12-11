@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/batch_add"
+        android:icon="@drawable/ic_batch_add"
+        android:showAsAction="always|collapseActionView"
+
+        android:title="Batch Add" />
+    <item
+        android:id="@+id/qr_code"
+        android:icon="@drawable/ic_qr_code"
+        android:showAsAction="always|collapseActionView"
+
+        android:title="Scan QR Code" />
+
+
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh"
+        android:showAsAction="always|collapseActionView"
+        android:title="Refresh" />
     <item
         android:id="@+id/add_container"
         android:icon="@drawable/ic_add_container"
-        android:showAsAction="ifRoom|collapseActionView"
-        android:title="addContainer" />
+        android:showAsAction="always|collapseActionView"
+        android:title="Add a Container" />
 
     <item
     android:id="@+id/add_item"
     android:icon="@drawable/ic_add_item"
-    android:showAsAction="ifRoom|collapseActionView"
-        android:title="addItem" />
-    <item
-        android:id="@+id/refresh"
-        android:icon="@drawable/ic_refresh"
-        android:showAsAction="ifRoom|collapseActionView"
-        android:title="Refresh" />
+    android:showAsAction="always|collapseActionView"
+        android:title="Add an Item" />
+
 
 
 </menu>

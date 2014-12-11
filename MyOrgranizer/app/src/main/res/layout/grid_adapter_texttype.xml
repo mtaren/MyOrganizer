@@ -11,7 +11,7 @@
         android:layout_height="60dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/blue"
+        android:textColor="@color/gIndigo500"
         android:background="#00000000"
         android:gravity="fill_vertical"
 

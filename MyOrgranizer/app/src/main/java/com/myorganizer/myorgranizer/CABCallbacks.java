@@ -35,9 +35,9 @@ public class CABCallbacks {
 
     public static class SelectedActionModeCallback implements ActionMode.Callback{
         public final String TAG = "selectedACtionBar";
-        public final String GETOBJEDIT = "/WS_GetOneObjectAttributes";
-        public final String DELETECONTAINER= "/WS_DeleteContainer";
-        public final String DELETEITEM = "/WS_DeleteItem";
+        public static final String GETOBJEDIT = "/WS_GetOneObjectAttributes";
+        public static final String DELETECONTAINER= "/WS_DeleteContainer";
+        public static final String DELETEITEM = "/WS_DeleteItem";
         public String mCurrentContainerId;
         private OnFragmentInteractionListener mListener;
 
@@ -133,6 +133,8 @@ public class CABCallbacks {
             Sm.state = false;
             mListener = null;
         }
+
+        //change all httpClient to mListener
         public void GetItemParams_Request(String ItemId){
             RequestParams params = new RequestParams();
             params.add("ObjId", ItemId);

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <form id="share-container-form" class="white-popup mfp-hide form-horizontal">
+    <h1 class="text-center">Share</h1>
+    <fieldset style="border:0;">
+     <div id="input fields" class="text-center" width='480px'>
+        <!--Email -->
+        <label class="text-center" for="name-grid_item">Enter an Email to Share</label>
+          <div class="text-center">
+            <input class = "focusme" id="share-email" name="email" type="text" placeholder="@gmail.com" required="">
+          </div>
+        </div>
+        <!-- for error -->
+        <p class= "hide text-center" id="error-msg" style="color:red">
+            Please Enter a valid email
+        </p>
+        
+        <!-- submit button -->
+        <!-- 
+        <div class="text-center">
+            <Button id="addItemButt" class="btn btn-warning text-center">  Share   </Button>
+        </div>  -->
+    </fieldset>
+  </form>
+
+
+  <script>
+  var ShareContainerList;
+
+  function StartShare(containerList){
+    ShareContainerList = containerList;
+    $('#shareButt').click();
+  }
+    
+    // prevent default submit behavior
+    $(function() {
+      $('#share-container-form').submit(function(e) {
+          e.preventDefault();
+          email = $("#share-email").val();
+          if(validateEmail(email)){
+            $.magnificPopup.close();
+            ShareContainer_Request(ShareContainerList, email);
+          }
+          else{
+            $("#error-msg").removeClass("hide");
+            //display error here
+          }
+      });
+    });
+
+
+    function validateEmail(email) { 
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }  
+  </script>
+</html>

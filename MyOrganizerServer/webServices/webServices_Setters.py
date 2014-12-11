@@ -52,6 +52,53 @@ class WS_AddPicture(blobstore_handlers.BlobstoreUploadHandler):
     obj.PicUrl = "/WS_GetPicture/" + str(obj.Blobkey)
     obj.put()
 
+## need to create a blobstore url that redirects to..
+## need user email.
+## add picture to pending event
+## search user for "BatchAdd" type
+## create item with parameters
+## add item id to batchADD list
+##
+class WS_AddPictureToBlankItem(blobstore_handlers.BlobstoreUploadHandler):
+  def post(self):
+    upload = self.get_uploads()
+    email = self.request.get("email")
+    containerId = self.request.get("cId")
+    usr = GetUserObj(email)
+    log("container id is " + containerId)
+    log("upload key is " + str(upload[0].key()))
+    #create item, put it in the parent container
+    params = {}
+    params['Parent'] = containerId
+    params['Name'] = "Unsorted"
+    params['Desc'] = "Unsorted"
+    params['Blobkey'] = upload[0].key()
+    params['PicUrl'] =  "/WS_GetPicture/" + str(upload[0].key())
+    params['Qty'] = 1
+    itemId = AddItem(params, None)
+
+    #now update the pending event, or 
+    params = { "containerId" : containerId  }
+    pend = GetPendEventMatchParams("BatchAdd", usr, params)
+    if pend == None: ##Create it
+      params['containerId'] = containerId
+      params['ItemList'] = [itemId]
+      params['MessageTitle'] = "Batch add for " + GetContainer(containerId).Name
+      params['MessageBody'] = "Log onto your computer to perform a Batch add!"
+      pend = PendingEvent(Type="BatchAdd", Data = params)
+      pend.put()
+      usr.PendingEvents.append(str(pend.key.id()))
+      usr.put()
+
+    else:
+      pend.Data['ItemList'].append(itemId)
+      pend.put()
+
+    
+    
+
+
+
 #check if top level container and shared.
 class WS_DeleteContainer(webapp2.RequestHandler):
   def post(self):
@@ -92,6 +139,8 @@ class WS_ModifyObj(webapp2.RequestHandler):
     ModifyObject(obj, d)
     self.response.write(objID)
 
+
+
 def ModifyObject(obj, params):
   for entry in params:
     setattr(obj, entry, params[entry])
@@ -100,18 +149,21 @@ def ModifyObject(obj, params):
 
 
 def MoveObject(destObjID, objMoveID, objType ):
-  destObj = GetContainer()
+  destObj = GetContainer(destObjID)
   params = {}
   params['Path'] = destObj.Path
   params['PathID'] = destObj.PathID
   params['Owner'] = destObj.Owner
   if objType == "item":
+    log("removeFromParent")
     destObj.Items.append(objMoveID)
     item = GetItem(objMoveID)
     RemoveFromParent(item, "item")
     UpdatePath(item, params)
    
-  if objType == "container":
+  # if objType == "container":
+  else:
+    log("moving a container")
     destObj.Containers.append(objMoveID)
     container = GetContainer(objMoveID)
     RemoveFromParent(container, "container")
@@ -122,8 +174,10 @@ def MoveObject(destObjID, objMoveID, objType ):
 def UpdatePath(obj, params):
   newPathID = params['PathID'][:]
   newPath   = params['Path'][:]
-  newPathID.append(obj.key.id())
+  newPathID.append(str(obj.key.id()))
   newPath.append(obj.Name)
+  obj.Path= newPath
+  obj.PathID = newPathID
   obj.put()
 
 def changeParamsUpdatePath(container, params):

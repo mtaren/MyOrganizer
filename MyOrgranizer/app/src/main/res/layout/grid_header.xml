@@ -7,6 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
+        android:gravity="center"
+        android:textSize="15sp"
         android:text="test"
+        android:background="@color/white"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

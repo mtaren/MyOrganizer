@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <form id="add-container-form" class="white-popup mfp-hide form-horizontal">
-    <h1 class="text-center">Add An container</h1>
+    <h1 class="text-center">Add Container</h1>
     <fieldset style="border:0;">
      <div id="input fields" class="pull-left" width='480px'>
         <!-- Name -->
@@ -69,13 +69,17 @@
           e.preventDefault();
           AddContainer_request();
           $.magnificPopup.close();
+          form = document.getElementById("add-container-form");
+          form.reset();
+          $("#containerPreview").attr('src', "/img/container.jpg");
+
       });
     });
 
     //the file upload init
     $('#fileuploadcontainer').fileupload({
-        dataType: 'json',
         add: function (e, data) {
+          $('#fileuploadcontainerSubmit').remove();
             data.context = $('<Button/>',{style:"display: none", id:"fileuploadcontainerSubmit"})
                 .appendTo(document.body)
                 .click(function () {
@@ -83,7 +87,13 @@
                     console.log(data);
                     data.submit();
                 });
+
         },
+        done: function(e,data){
+          console.log("get container upload done");
+          clickedContainer(CurrentContainerId);
+        },
+      
       });
 
  

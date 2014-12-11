@@ -3,26 +3,27 @@
   <form id="add-modify-object-form" class="white-popup mfp-hide form-horizontal">
     <h1 class="text-center" id="modify-title"></h1>
     <fieldset style="border:0;">
-     <div id="input fields" class="pull-left" width='480px'>
+     <div id="input fields" class="pull-left mod-obj-input" width='350px'>
+      <!-- Path -->
+        <div class="row">
+          <label class="col-md-4" for="name-grid_modify-object">Path</label>
+          <div class="col-md-8">
+            <span id="modify-objectPath" name="path"></Span>
+          </div>
+        </div>
         <!-- Name -->
         <div class="row">
           <label class="col-md-4" for="name-grid_modify-object">Name</label>
           <div class="col-md-8">
-            <input class = "focusme" id="namePop-modify-object" name="name" type="text" placeholder="Name" required="">
+            <input class = "focusme" onfocus="this.select();" id="namePop-modify-object" name="name" type="text" placeholder="Name" required="">
           </div>
         </div>
-        <!-- QTY -->
-        <div class="row" id="qtyDisplay">
-          <label class="col-md-4" for="Qty">Qty</label>
-          <div class="col-md-8">
-            <input id="qtyPop-modify-object" name="qty" type="number" value="1" required="">
-          </div>
-        </div>
+        
         <!-- description -->
         <div class="row">
-          <label class="col-md-4" for="desc">Description</label>
+          <label class="col-md-4"  for="desc">Description</label>
           <div class="col-md-8">
-            <input id="descPop-modify-object" name="desc" type="text" placeholder="shiny toothpaste" required="">
+            <input id="descPop-modify-object" onfocus="this.select();" name="desc" type="text" placeholder="shiny toothpaste" required="">
           </div>
         </div>
         <!-- category -->
@@ -39,6 +40,13 @@
                 <option value="Toys">Toys</option>
               </select>
             </div >
+          </div>
+        </div>
+        <!-- QTY -->
+        <div class="row" id="qtyDisplay">
+          <label class="col-md-4" for="Qty">Qty</label>
+          <div class="col-md-8">
+            <input id="qtyPop-modify-object" name="qty" type="number" value="1" required="">
           </div>
         </div>
         <!-- picture upload button-->
@@ -66,9 +74,20 @@
     var CurrObj = {};
     var MContainerList;
     var MItemList;
+    var BatchAdd = false;
+    var CurrBatchPendId;
    function StartModify(CList, IList){
     MContainerList = CList;
     MItemList = IList;
+    BatchAdd = false;
+    ProcessItemForm();
+    $('#modifyButt').click();
+   }
+   function StartModifyBatch(IList, PendingEventId){
+    MContainerList = [];
+    MItemList = IList;
+    CurrBatchPendId = PendingEventId;
+    BatchAdd = true;
     ProcessItemForm();
     $('#modifyButt').click();
    }
@@ -95,6 +114,7 @@
       $('#catPop-modify-object').val(obj.Category);
       // $('#catPop-modify-object').val("Apparel");
       $('#modify-objectPreview').attr('src', obj.PicUrl);
+      $('#modify-objectPath').text(obj.Path);
 
 
       if (objType == "container"){
@@ -135,13 +155,16 @@
         params['ObjId'] = CurrObj['obj'].Id;
         //do ractual request here
         ModifyObj_request(params);
+        if(BatchAdd ==true){ // remove item from pending event
+          ResolvePendingEvent_request(CurrBatchPendId, CurrObj['obj'].Id);
+        }
         console.log(params)
         if( (MContainerList.length == 0) && (MItemList.length == 0)){
           $.magnificPopup.close();
         }else{
           $('#namePop-modify-object').focus();
           $("#fileuploadmodify-objectSubmit").remove();
-          ProcessItemForm()
+          ProcessItemForm();
         }
         
     });

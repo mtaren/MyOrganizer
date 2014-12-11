@@ -1,9 +1,18 @@
+input[type=checkbox] {
+  width:15px; 
+  height:15px;
+  margin-right: 5px;
+}
 
 .web-title{
   color: #333333;
-  font-family: Copperplate / Copperplate Gothic Light, sans-serif;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
   font-size: 60px;
-  display:inline;
+  display:inline;  
+}
+.mod-obj-input{
+  max-width: 350px;
 }
 
 .title-bar{
@@ -13,8 +22,18 @@
 .col-fixed {
     /* custom width */
     /* width:320px;  use this for three columns*/
-     width: 240px; /* use this for four columns*/
+    /*width: 240px;  use this for four columns*/
+    width: 160px;  /*use this for 8 columns*/
+
 }
+
+.pad0{
+  padding: 0px;
+}
+.imgs{
+ height: 140px;
+}
+
 .col-min {
     /* custom min width */
     min-width:320px;
@@ -37,6 +56,12 @@
     margin-right:-4px;
 }
 
+.grid_container{
+  /*background-color:#BF5700; /*ut orange*/
+  background-color:#BBDEFB; 
+}
+
+
 
 .hover-effect
 {   
@@ -54,6 +79,13 @@
   font-size: 18px;
 
 }
+
+
+.crop-center{
+  object-fit: cover;  /*Do not scale the image */
+  /*object-position: center;  Center the image within the element */
+}
+
 
 .pad-bar{
   margin-top: 10px;
@@ -81,7 +113,10 @@
 
 .preview-image{
     width:100%;
-    max-width:500px;
+    max-width:  600px;
+    max-height: 700px;
+    object-fit: cover;  /*Do not scale the image */
+    object-position: center; /* Center the image within the element */
 }
 
 .notif-text{
@@ -152,6 +187,20 @@
     margin-right:20px;
     /*visibility: hidden;*/
 }
+
+/*scrolling banner stuff*/
+
+.fixedz {
+    position:fixed;
+    top:0px;
+    background: white;
+    z-index: 1009;
+    padding-bottom: 10px;
+}
+.paddingTopz{
+    padding-top:0px;
+}
+
 
 /*http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28top\%2C\%20rgba\%2833\%2C180\%2C226\%2C1\%29\%2046\%25\%2C\%20rgba\%28113\%2C206\%2C239\%2C1\%29\%2081\%25\%2C\%20rgba\%28142\%2C213\%2C238\%2C1\%29\%2089\%25\%2C\%20rgba\%28179\%2C221\%2C237\%2C1\%29\%2099\%25\%2C\%20rgba\%28183\%2C222\%2C237\%2C1\%29\%20100\%25\%29\%3B'*/
 .notification{

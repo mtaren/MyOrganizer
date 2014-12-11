@@ -72,7 +72,7 @@ public class ViewPagerFragment extends Fragment implements View.OnClickListener 
         mViewPager = (ViewPager) v.findViewById(R.id.pager);
         mViewPager.setOffscreenPageLimit(3);
         // Set the ViewPagerAdapter into ViewPager
-        //viewPager.setAdapter(new ViewPagerAdapter(getActivity().getFragmentManager())); //not sure which one to use
+//        mViewPager.setAdapter(new ViewPagerAdapter(getActivity().getFragmentManager())); //not sure which one to use
         mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
         return  v;
     }

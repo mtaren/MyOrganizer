@@ -47,6 +47,8 @@ public class searchFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private String GETOBJEDIT = "/WS_GetOneObjectAttributes";
     private String TAG = "search";
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -141,6 +143,13 @@ public class searchFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    public void GetItemParams_Request(String ItemId){
+        RequestParams params = new RequestParams();
+        params.add("ObjId", ItemId);
+        params.add("ObjType", "item");
+        mListener.PerformRequestPost(GETOBJEDIT, params, new StartEditItemHandler());
+    }
+
 
     public void SearchRequest(String searchStr){
         RequestParams r = new RequestParams();
@@ -176,20 +185,44 @@ public class searchFragment extends Fragment {
                         mListener.ChangePage(0);
                         mListener.HomeFragmentGetContainer(mContainerJson.ContainerIds.get(position));
                     }else{ //this is an item
-//                        mListener.HomeFragmentGetContainer(mContainerJson
-//                                .ItemIds.get(position-mContainerJson.ContainerIds.size()));
-                        //edit page
+                        GetItemParams_Request(mContainerJson
+                                .ItemIds.get(position-mContainerJson.ContainerIds.size()));
                         Log.e(TAG, "clicked item");
                     }
-
-
                 }
             });
-
-
         }
         @Override
         public void onFailure(int statusCode, Header[] headers, byte[] response, Throwable error) {
+            Log.e(TAG, "There was a problem in retrieving the url : " + error.toString());
+        }
+    }
+    public class StartEditItemHandler extends AsyncHttpResponseHandler{
+        private String TAG = "StartEdiitobjhandler";
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            Log.e(TAG, new String(response));
+            //parse obj
+            try
+            {
+                JsTypes.ItemObj it= new ObjectMapper().readValue(response, JsTypes.ItemObj.class);
+                Log.e(TAG,"done");
+                ItemFragment f = ItemFragment.newInstance(it.name, it.Desc, it.cat, it.qty,
+                        it.ParentId, HomeActivity.domain + it.picUrl, it.Path, it.Id);
+                mListener.ShowFragment(f);
+            }
+            catch (JsonParseException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] resp, Throwable error) {
             Log.e(TAG, "There was a problem in retrieving the url : " + error.toString());
         }
     }
@@ -199,6 +232,7 @@ public class searchFragment extends Fragment {
         public void PerformRequestPost(String addr, RequestParams r, AsyncHttpResponseHandler h);
         public void ChangePage(int i);
         public void HomeFragmentGetContainer(String containerId);
+        public void ShowFragment(Fragment f);
     }
 
 }

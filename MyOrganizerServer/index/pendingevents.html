@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      
+      <!-- Mag popup css -->
+      <!-- <link rel="stylesheet" href="css/magpop.css">  -->
+      <!-- Bootstrap -->
+      <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+      <!-- <link href="css/bootstrap-theme.css" rel="stylesheet"> -->
+      <!-- file upload prettier -->
+      <!-- <link href="css/jquery.fileupload.css" rel="stylesheet"> -->
+
+      <!-- my own -->
+      <!-- <link href="css/style.css" rel="stylesheet"> -->
+      
+
+      
+      
+    </head>
+    <body >
+      <!-- Jquery  -->
+      <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script-->
+      <!-- My Helper functions -->
+      <!--<script src="js/home.js" type="text/javascript"></script>-->
+      <!-- Mag popup js  -->
+      <!--<script src="js/magpop.js"></script> -->
+      <!-- bootstrap js -->
+      <!--<script src="js/bootstrap.min.js"></script>-->
+      <!-- File upload -->
+      <!--<script src="js/jquery.ui.widget.js"></script>-->
+      <!--<script src="js/jquery.iframe-transport.js"></script>-->
+      <!--<script src="js/jquery.fileupload.js"></script>-->
+      
+
+      <div class="content text-center width=400px container" >
+
+      <div id='main'></div>    
+      </div>
+    </body>
+  </html>
+
+  <script>
+
+
+  
+
+  function CreateNotifictation(WSresponseDict){
+    MsgTitle = WSresponseDict.MessageTitle;
+    MsgBody  =  WSresponseDict.MessageBody;
+    Type = WSresponseDict.Type;
+    Id = WSresponseDict.Id;
+
+
+    container = $('<div/>', {
+        // class : "border-top-radius(50) notification",
+        class : "notification",
+        id : Id
+      });
+      textDiv = $('<div/>', {
+        class : "pull-left notif-text"
+      });
+       Title= $('<p/>', {
+          class: 'notif-title  text-left',
+          text: MsgTitle
+        });
+        Body = $('<p/>', {
+          class: 'notif-body text-left',
+          text: MsgBody
+          
+        });
+        
+        Body.prependTo(textDiv);
+        Title.prependTo(textDiv);
+        textDiv.prependTo(container);
+        switch(Type){
+            case "ShareRequest":
+              AddAcceptDeny(container, Id);
+              break;
+            case "BatchAdd":
+              AddStartBatchAdd(container,Id);
+              break;
+            default:
+              console.log("no pendingevent type found");
+        }
+        container.appendTo('#main');
+  }
+
+  function AddAcceptDeny(container, ID){
+    Deny = $('<Button/>', {
+      class: 'pull-right notif-butt btn btn-danger actionPendingEvent btn-sm',
+      text: "Deny",
+      title: ID
+    });
+    Accept = $('<Button/>', {
+      class: 'pull-right notif-butt btn btn-success actionPendingEvent btn-sm',
+      text: "Accept",
+      title: ID
+    });
+    Deny.appendTo(container);
+    Accept.appendTo(container);
+  }
+  function AddStartBatchAdd(container, ID){
+    SBatchA = $('<Button/>', {
+      class: 'pull-right notif-butt btn btn-warning actionPendingEvent btn-sm',
+      text: "Start Batch Add",
+      title: ID
+    });
+    SBatchA.appendTo(container);
+  }
+
+  function ResolvePendingEvent_request(pendID, actionPendingEvent){
+    if(actionPendingEvent == "Start Batch Add"){
+      console.log("batch Add");
+      GetPendingDataFORBATCH_request(pendID); //gets the itemList from pending event
+      return;
+    }
+    params = {};
+    params['PendId'] = pendID;
+    params['action'] = actionPendingEvent;
+    $.post('/WS_ResolvePendEvent',params,function(data,Status){
+        console.log("callback for resolve pend Event");
+         // data = JSON.parse(data);
+         // console.log(data.ContainerList);
+         //StartModify(data.ContainerList, data.ItemList)
+      });
+  }
+
+  //this can be used to get the data
+  function GetPendingData_request(pendId){
+    params = {};
+    params['PendId'] = pendId;
+    $.post('/WS_GetPendingEventDataBatchAdd',params,function(data,Status){
+         data = JSON.parse(data);
+         console.log(data.ItemList);
+         StartModifyBatch(data.ItemList, data.PendId)
+      }); 
+  }
+  function GetPendingDataFORBATCH_request(pendId){
+    params = {};
+    params['PendId'] = pendId;
+    $.post('/WS_GetPendingEventDataBatchAdd',params,function(data,Status){
+         data = JSON.parse(data);
+         console.log(data.ItemList);
+         StartModifyBatch(data.ItemList, data.PendId);
+      }); 
+  }
+  
+  function GetPendingEvents(){
+    params = { };
+    $.post('/WS_FetchPendingEvents',params,function(data,Status){    
+        
+        data = JSON.parse(data);
+        pendList = data.pendLists
+        console.log(pendList);
+        // console.log(pendList[0]);
+        for(var i in pendList){
+           CreateNotifictation( pendList[i]);
+         }
+         if(pendList.length >0){
+          $('#notification_count').text( pendList.length.toString());
+          $('#notification_count').show();
+        }
+         init_onclicks();
+    });
+
+
+  }
+
+  $(document).ready(function() {
+    GetPendingEvents();
+  });
+
+  //Onclick
+  function init_onclicks(){
+    $('.actionPendingEvent').click(function(event){
+      $(this).unbind("click");
+      pendID = event.target.title;
+      action = $(this).text();
+      notif = "#" + event.target.title;
+      $(notif).animate({opacity: 0}, 500);
+      $(notif).animate({height: 0, "padding-left": 0, "padding-right": 0, "margin-left": 0, "margin-right": 0}, 500, function() {
+        $(notif).remove();
+      });
+      ResolvePendingEvent_request(pendID, action);
+
+    });
+  }
+
+  WSresponse = {};
+  WSresponse['MessageTitle'] = "dd";
+  WSresponse['MessageBody'] = "dd";
+  WSresponse['Type'] = "ShareRequest";
+  WSresponse['Id'] = "thisid";
+  //CreateNotifictation(WSresponse);
+
+
+
+  </script>
