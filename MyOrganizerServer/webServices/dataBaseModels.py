@@ -54,7 +54,7 @@ def GetUserEmail(this):
   #request.get("email")
   user = users.get_current_user()
   if user:
-    return user.email()
+    return user.email().lower()
   else:
     if 'Authorization' in this.request.headers:
       access_token = this.request.headers['Authorization']
