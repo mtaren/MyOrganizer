@@ -98,11 +98,14 @@
         CurrObj['obj'] = MContainerList.shift();
         CurrObj['type'] = "container"
         PopulateForm(CurrObj['obj'], "container");
+        $('#namePop-modify-object').focus();
+
       }else{
         if(MItemList.length > 0){
           CurrObj['type'] = "item"
           CurrObj['obj'] = MItemList.shift();
           PopulateForm(CurrObj['obj'], "item");
+          $('#namePop-modify-object').focus();
         }
       }
    }
