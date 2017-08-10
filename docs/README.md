@@ -9,7 +9,7 @@ MyOrganizer was developed for one of my graduate classes at UT. It is an android
 
 Usage
 -----
-To use MyOrganizer, use  the phone app to create "Rooms" and "Boxes". Then take pictures of things you would want to store, adding categories for easier searching. There is also a web interface with the same functionality, written in Python and run on Google APP engine. Log in with your google account on both your android phone and the website.
+To use MyOrganizer, use  the phone app or web app to create "Rooms" and "Boxes". Then take pictures of things you would want to store, adding categories and descriptions for easier searching. The web interface has all  the same functionality as the phone app, but the I reccomend using the phone to add items since taking pictures is easier. Written in Python and run on Google APP engine. Log in with your google account on both your android phone and the website.
 
 Android app is not on the playstore, but web app is still hosted by Google App Engine!
 
