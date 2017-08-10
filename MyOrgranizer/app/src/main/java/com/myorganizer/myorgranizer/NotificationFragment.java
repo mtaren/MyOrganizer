@@ -86,7 +86,7 @@ public class NotificationFragment extends Fragment {
 
         //Testing
         PendEventObj p = new PendEventObj();
-        p.Title = "martinilin@gmail.com has shared something with you";
+        p.Title = "test@gmail.com has shared something with you";
         p.Body = "this is the body";
         ArrayList<PendEventObj> e  = new ArrayList<>();
         e.add(p);
